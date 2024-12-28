@@ -10,8 +10,15 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::apiResource('raceList', RacelistController::class);
+Route::prefix('race')->group(function () {
+    Route::apiResource('list', RacelistController::class);
+    Route::get('list', [RacelistController::class, 'raceList']);
 
-Route::post('userRegist', [UserPersonalController::class, 'regist']);
+    Route::apiResource('registList', RacelistController::class);
+    Route::get('registList', [RacelistController::class, 'raceRegistList']);
+});
 
-Route::post('userLogin', [UserPersonalController::class, 'login']);
+Route::prefix('user')->group(function () {
+    Route::post('regist', [UserPersonalController::class, 'regist']);
+    Route::post('login', [UserPersonalController::class, 'login']);
+});

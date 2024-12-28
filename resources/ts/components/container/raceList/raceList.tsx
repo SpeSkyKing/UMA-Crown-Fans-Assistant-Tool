@@ -10,7 +10,7 @@ export const RaceList = () => {
     useEffect(() => {
         const fetchRaces = async () => {
             try {
-              const response = await fetch("/api/raceList");
+              const response = await fetch("/api/race/list");
               const responseJson = await response.json();
               const data :Race[] = responseJson.data;
               setRaces(data);
