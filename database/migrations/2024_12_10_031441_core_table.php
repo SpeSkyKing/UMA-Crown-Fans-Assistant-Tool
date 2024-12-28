@@ -43,7 +43,7 @@ return new class extends Migration
             $table->enum('distance',['1','2','3','4']);
             $table->smallInteger('distance_detail');
             $table->integer('num_fans');
-            $table->enum('race_rank',['1','2','3']);
+            $table->enum('race_rank',['1','2','3','4','5']);
             $table->boolean('senior_flag');
             $table->boolean('classic_flag');
             $table->boolean('junior_flag');
@@ -83,6 +83,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('sessions');
         Schema::dropIfExists('regist_umamusume_race_table');
 
         Schema::dropIfExists('user_security_table');
