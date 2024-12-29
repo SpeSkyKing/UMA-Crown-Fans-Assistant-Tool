@@ -1,5 +1,5 @@
 import React, { useState,useEffect} from 'react';
-import {Race} from '../../interface/DBinterface';
+import {Race} from '../../interface/Interface';
 import {RaceListHeader} from '../raceList/raceListHeader';
 import {RaceListdata} from '../raceList/raceListdata';
 
@@ -68,11 +68,9 @@ export const CharacterRegist = () => {
         </div>
   
         <div className="mt-6">
-            <div className="overflow-y-auto max-h-[calc(100vh-22rem)] h-96">  {/* 22remはウマ娘の登録部分の高さ */}
+            <div className="overflow-y-auto max-h-[calc(100vh-22rem)] h-96">
                 <table className="table-auto w-full border-collapse border border-gray-300">
-                <thead className="sticky top-0 bg-white z-10">
                     <RaceListHeader />
-                </thead>
                 <tbody>
                     {races.map((race) => (
                     <RaceListdata race={race} key={race.id} />
@@ -82,7 +80,6 @@ export const CharacterRegist = () => {
             </div>
 
   
-          {/* キャラクター登録ボタン */}
           <div className="mt-6 flex justify-center">
             <button className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white py-3 px-8 rounded-full shadow-lg hover:bg-gradient-to-l transform hover:scale-105 transition-all duration-300">
               登録
