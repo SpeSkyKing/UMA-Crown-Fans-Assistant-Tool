@@ -4,7 +4,7 @@ import {CharacterList} from '../container/characterList/characterList';
 import {RaceList} from '../container/raceList/raceList';
 import {RemainingRaceList} from '../container/remainingRaceList/remainingRaceList';
 import {LiveList} from '../container/liveList/liveList';
-import {ArtistList} from '../container/artistList/artistList';
+import {ActerList} from '../container/acterList/acterList';
 
 export const Content = ({ selectedContent }) => {
     switch(selectedContent){
@@ -28,9 +28,9 @@ export const Content = ({ selectedContent }) => {
             return (
                 <LiveList></LiveList>
             );
-        case 'artistList':
+        case 'acterList':
             return (
-                <ArtistList></ArtistList>
+                <ActerList></ActerList>
             );
     }
   };

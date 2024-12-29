@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RacelistController;
 use App\Http\Controllers\Api\UserPersonalController;
+use App\Http\Controllers\Api\ActerController;
 
 
 Route::get('/user', function (Request $request) {
@@ -22,3 +23,9 @@ Route::prefix('user')->group(function () {
     Route::post('regist', [UserPersonalController::class, 'regist']);
     Route::post('login', [UserPersonalController::class, 'login']);
 });
+
+Route::prefix('acter')->group(function () {
+    Route::apiResource('acterlist', ActerController::class);
+    Route::get('acterlist', [ActerController::class, 'acterList']);
+});
+
