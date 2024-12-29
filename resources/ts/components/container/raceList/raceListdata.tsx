@@ -1,5 +1,5 @@
 import React from 'react';
-import {Race} from '../../interface/DBinterface';
+import {Race} from '../../interface/Interface';
 export const RaceListdata : React.FC<{ race: Race }> = ({race}) => {
     let raceDistance = "";
     switch (Number(race.distance)) {

@@ -21,8 +21,8 @@ return new class extends Migration
         });
 
         Schema::create('umamusume_table', function (Blueprint $table) {
-            $table->integer('umamusume_id'); //ID
-            $table->string('umamusume_name'); //名前
+            $table->integer('umamusume_id');
+            $table->string('umamusume_name');
             $table->enum('turf_aptitude',['A','B','C','D','E','F','G']);
             $table->enum('dirt_aptitude',['A','B','C','D','E','F','G']);
             $table->enum('front_runner_aptitude',['A','B','C','D','E','F','G']);

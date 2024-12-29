@@ -26,10 +26,9 @@ return new class extends Migration
             $table->integer('umamusume_id');
             $table->integer('race_id');
             $table->integer('race_number');
-            $table->integer('random_race_id')->nullable();
+            $table->integer('random_group')->nullable();
             $table->foreign('umamusume_id')->references('umamusume_id')->on('umamusume_table')->onDelete('cascade');
             $table->foreign('race_id')->references('race_id')->on('race_table')->onDelete('cascade');
-            $table->foreign('random_race_id')->references('race_id')->on('scenario_race_table')->onDelete('cascade');
             $table->primary(['umamusume_id','race_id','race_number']);
 
         });

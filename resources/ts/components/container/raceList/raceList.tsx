@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Race} from '../../interface/DBinterface';
+import {Race} from '../../interface/Interface';
 import {RaceListHeader} from './raceListHeader';
 import {RaceListdata} from './raceListdata';
 export const RaceList = () => {
@@ -30,11 +30,9 @@ export const RaceList = () => {
       <div className="min-h-full flex justify-center">
       <div className="w-11/12 max-w-10xl rounded-lg p-6 shadow-lg relative">
         
-        <div className="w-11/12 h-9/10 absolute inset-0 m-auto bg-white/50 rounded-lg shadow-lg overflow-auto p-4 overflow-auto scrollbar-hide">
+        <div className="w-11/12 h-9/10 absolute inset-0 m-auto bg-white/50 rounded-lg shadow-lg overflow-auto p-4 scrollbar-hide">
           <table className="table-auto w-full border-collapse border border-gray-300 ">
-            <thead>
-              <RaceListHeader></RaceListHeader>
-            </thead>
+            <RaceListHeader></RaceListHeader>
             <tbody>
             {races.map((race) => (
               <RaceListdata race={race}></RaceListdata>
@@ -44,7 +42,5 @@ export const RaceList = () => {
         </div>
       </div>
     </div>
-    
-    
     );
 };
