@@ -12,6 +12,7 @@ export interface Race {
     race_months: number;
     half_flag: boolean;
     scenario_flag: boolean;
+    checked:boolean;
 }
 
 export interface Umamusume{
@@ -28,6 +29,22 @@ export interface Umamusume{
     classic_aptitude:number;
     long_distance_aptitude:number;
     acter:Acter;
+}
+
+export interface User{
+    user_id:number;
+    user_name:string;
+    password:string;
+    email:string;
+    phone_number:string;
+    user_image:string;
+    birthday:Date;
+    gender:number;
+    location:string;
+    country:string;
+    state:boolean;
+    role:boolean;
+    api_token:string;
 }
 
 export interface Acter{

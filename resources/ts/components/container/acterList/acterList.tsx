@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import {ActerListHeader} from './acterListHeader';
 import {ActerListData} from './acterListData';
-import {Acter} from '../../interface/Interface';
+import {Acter} from '../../interface/interface';
 export const ActerList = () => {
       const [acters, setActers] = useState<Acter[]>([]);
       const [loading,setLoading] = useState(true);

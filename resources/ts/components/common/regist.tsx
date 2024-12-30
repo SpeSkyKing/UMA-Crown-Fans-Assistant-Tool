@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-export const Regist = ({ onRegist }: { onRegist: (user_id: string, password: string) => void }) => {
-    const [user_id, setuser_id] = useState("");
+export const Regist = ({ onRegist }: { onRegist: (user_name: string, password: string) => void }) => {
+    const [user_name, setuser_name] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -13,14 +13,14 @@ export const Regist = ({ onRegist }: { onRegist: (user_id: string, password: str
     const [role, setRole] = useState("0");
 
     const handleRegist = async ()  => {
-        if (user_id && password) {
+        if (user_name && password) {
         try {
-            const response = await fetch("/api/userRegist", {
+            const response = await fetch("/api/user/regist", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ user_id, password ,email , phone ,avatar ,birthday ,gender ,address ,country ,role}),
+                body: JSON.stringify({ user_name, password ,email , phone ,avatar ,birthday ,gender ,address ,country ,role}),
             });
 
             if (!response.ok) {
@@ -29,7 +29,7 @@ export const Regist = ({ onRegist }: { onRegist: (user_id: string, password: str
 
 
             const data = await response.json();
-            onRegist(user_id, password);
+            onRegist(user_name, password);
             alert("登録が完了しました！");
         } catch (error) {
 
@@ -54,16 +54,16 @@ export const Regist = ({ onRegist }: { onRegist: (user_id: string, password: str
         <h2 className="text-2xl font-bold text-center mb-6 text-white">新規登録</h2>
 
         <div className="mb-4">
-            <label htmlFor="user_id" className="block text-sm font-medium text-white">
-                ユーザーID
+            <label htmlFor="user_name" className="block text-sm font-medium text-white">
+                ユーザー名
             </label>
             <input
-                id="user_id"
+                id="user_name"
                 type="text"
                 className="w-full px-4 py-2 mt-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none"
-                placeholder="ユーザーIDを入力してください"
-                value={user_id}
-                onChange={(e) => setuser_id(e.target.value)}
+                placeholder="ユーザー名を入力してください"
+                value={user_name}
+                onChange={(e) => setuser_name(e.target.value)}
             />
         </div>
 

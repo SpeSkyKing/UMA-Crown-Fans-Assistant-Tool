@@ -54,8 +54,9 @@ return new class extends Migration
         });
 
         Schema::create('user_table', function (Blueprint $table) {
-            $table->string('user_id');
+            $table->integer('user_id');   
             $table->string('password');
+            $table->string('user_name');
             $table->string('email');
             $table->string('phone_number');
             $table->string('user_image')->nullable();
@@ -65,6 +66,7 @@ return new class extends Migration
             $table->string('country');
             $table->boolean('state');
             $table->boolean('role');
+            $table->string('api_token', 80)->nullable()->unique();
             $table->primary('user_id');
         });
 

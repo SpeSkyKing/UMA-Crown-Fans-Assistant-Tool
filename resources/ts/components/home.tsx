@@ -3,12 +3,13 @@ import {Sidebar} from './layout/sidebar';
 import {Content} from './layout/content';
 import {Auth} from './common/auth';
 import {Regist} from './common/regist';
+import {User} from './interface/interface';
 
 export const Home = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [selectedContent, setSelectedContent] = useState("characterRegist");
     const [isRegistering, setIsRegistering] = useState(false);
-    const [username, setUsername] = useState('管理者');
+    const [userName, setUserName] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem("auth_token");
@@ -17,23 +18,49 @@ export const Home = () => {
         }
     }, []);
 
-    const handleLogin = (user_id: string, password: string) => {
-        if (user_id && password) {
-            fetch("/api/userLogin", {
+    useEffect(() => {
+        const getUserName = async () => {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                console.error('トークンが見つかりません');
+                return;
+            }
+            try {
+                const response = await fetch('/api/user/data', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('ユーザー情報の取得に失敗しました');
+                }
+                const responseJson = await response.json();
+                const data: User = responseJson.data;
+                setUserName(data.user_name);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+        getUserName();
+    }, []);
+    
+
+    const handleLogin = (user_name: string, password: string) => {
+        if (user_name && password) {
+            fetch("/api/user/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ user_id: user_id, password: password }),
+                body: JSON.stringify({ user_name: user_name, password: password }),
             })
             .then((response) => response.json())
             .then((data) => {
                 if (data.message === "ログイン成功") {
                     localStorage.setItem("auth_token", data.token);
                     setIsAuthenticated(true);
-                    console.log("ログイン成功:", user_id);
-                } else {
-                    console.log("ログイン失敗");
                 }
             })
             .catch((error) => {
@@ -43,20 +70,37 @@ export const Home = () => {
     };
 
 
-    const handleRegist = (user_id: string, password: string) => {
+
+    const handleRegist = (user_name: string, password: string) => {
         setIsRegistering(false);
-        handleLogin(user_id, password);
+        handleLogin(user_name, password);
     };
 
     const newRegist = () =>{
         setIsRegistering(true);
     };
 
-    const handleLogout = () => {
-        setIsAuthenticated(false);
-    };
-
-    
+    const handleLogout = async () => {
+        try {
+          const response = await fetch('/api/user/logout', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+            },
+          });
+      
+          if (response.ok) {
+            setIsAuthenticated(false);
+            localStorage.removeItem('auth_token');
+          } else {
+            console.error('ログアウトに失敗しました');
+          }
+        } catch (error) {
+          console.error('ログアウト中にエラーが発生しました', error);
+        }
+      };
+      
     if (!isAuthenticated) {
         if (isRegistering) {
             return (
@@ -79,21 +123,17 @@ export const Home = () => {
     </div>
 
     <div className="relative flex flex-col w-1/5 bg-umamusume-side bg-cover overflow-hidden bg-white/50">
-        {/* ユーザー名とログアウトボタン */}
         {isAuthenticated && (
             <div className=" text-white flex flex-col items-center justify-center w-full space-y-4">
-                {/* ユーザー名 */}
                 <div
                     className={`block w-full text-center text-2xl font-bold py-4 rounded-xl border-2 border-gray-300 
                     bg-transparent text-purple-500 transition-all duration-300 hover:bg-pink-200 bg-[30%_30%]
                     hover:text-white hover:scale-105 hover:shadow-lg active:bg-pink-300 mb-4 bg-userName bg-cover`}
                 >
                     <div className="font-bold text-pink text-2xl w-full text-center">
-                        {username}
+                        {userName}
                     </div>
                 </div>
-
-                {/* ログアウトボタン */}
                 <button
                     onClick={handleLogout}
                     className={`block w-full text-center text-2xl font-bold py-4 rounded-xl border-2 border-gray-300 
@@ -104,8 +144,6 @@ export const Home = () => {
                 </button>
             </div>
         )}
-
-        {/* サイドバーのコンテンツ（タブなど） */}
         <Sidebar onTabClick={setSelectedContent} />
     </div>
 </div>

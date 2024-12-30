@@ -1,6 +1,17 @@
-import React from 'react';
+import {useState } from 'react';
 import {Race} from '../../interface/interface';
-export const RaceListdata : React.FC<{ race: Race }> = ({race}) => {
+type CharacterRegistDataProps = {
+    race: Race;
+    checked: boolean;
+    onCheckboxChange: (raceId: number,checked:boolean) => void;
+  };
+export const CharacterRegistData : React.FC<CharacterRegistDataProps> = ({race,checked,onCheckboxChange}) => {
+    
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const isChecked = e.target.checked;
+        onCheckboxChange(race.race_id, isChecked); // 親に変更を通知
+      };
+
     let raceDistance = "";
     switch (Number(race.distance)) {
         case 1:
@@ -28,12 +39,6 @@ export const RaceListdata : React.FC<{ race: Race }> = ({race}) => {
         case 3:
             raceRank = "GⅢ";
         break;
-        case 4:
-            raceRank  = "PRE";
-        break;
-        case 5:
-            raceRank  = "OP";
-        break;
     }
 
     let toRun = "";
@@ -53,6 +58,13 @@ export const RaceListdata : React.FC<{ race: Race }> = ({race}) => {
 
     return (
         <tr>
+            <td className="border border-gray-500 px-4 py-2 text-center">
+            <input
+            type="checkbox"
+            checked={checked}
+            onChange={handleChange}
+            />
+            </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
             {race.race_name}
             </td>
@@ -64,12 +76,6 @@ export const RaceListdata : React.FC<{ race: Race }> = ({race}) => {
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
             {raceDistance}/{race.distance_detail}m
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {race.num_fans}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {Math.ceil(race.num_fans * 1.09)}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
             {toRun}

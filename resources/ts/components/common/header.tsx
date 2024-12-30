@@ -1,5 +1,5 @@
 import React from "react";
-import {HeaderProps,Item} from '../interface/Interface';
+import {HeaderProps,Item} from '../interface/interface';
 
 export const Header: React.FC<HeaderProps> = ({ ItemArray }) => {
     return (

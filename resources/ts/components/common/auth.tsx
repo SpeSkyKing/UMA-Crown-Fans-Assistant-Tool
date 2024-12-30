@@ -1,14 +1,14 @@
 import { useState } from "react";
 
-export const Auth = ({ onLogin ,onRegist }: { onLogin: (user_id: string, password: string) => void , onRegist:() => void}) => {
-    const [user_id, setuser_id] = useState("");
+export const Auth = ({ onLogin ,onRegist }: { onLogin: (user_name: string, password: string) => void , onRegist:() => void}) => {
+    const [user_name, setuser_name] = useState("");
     const [password, setPassword] = useState("");
 
     const handleLogin = () => {
-        if (user_id && password) {
-            onLogin(user_id, password);
+        if (user_name && password) {
+            onLogin(user_name, password);
         } else {
-            alert("ユーザーIDとパスワードを入力してください。");
+            alert("ユーザー名とパスワードを入力してください。");
         }
     };
 
@@ -25,16 +25,16 @@ export const Auth = ({ onLogin ,onRegist }: { onLogin: (user_id: string, passwor
                 <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">ログイン</h2>
 
                 <div className="mb-4">
-                    <label htmlFor="user_id" className="block text-sm font-medium text-gray-600">
-                        ユーザーID
+                    <label htmlFor="user_name" className="block text-sm font-medium text-gray-600">
+                        ユーザー名
                     </label>
                     <input
-                        id="user_id"
+                        id="user_name"
                         type="text"
                         className="w-full px-4 py-2 mt-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none"
-                        placeholder="ユーザーIDを入力してください"
-                        value={user_id}
-                        onChange={(e) => setuser_id(e.target.value)}
+                        placeholder="ユーザー名を入力してください"
+                        value={user_name}
+                        onChange={(e) => setuser_name(e.target.value)}
                     />
                 </div>
 
