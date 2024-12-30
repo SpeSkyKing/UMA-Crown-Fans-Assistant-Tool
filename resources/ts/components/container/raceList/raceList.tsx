@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Race} from '../../interface/Interface';
+import {Race} from '../../interface/interface';
 import {RaceListHeader} from './raceListHeader';
 import {RaceListdata} from './raceListdata';
 export const RaceList = () => {

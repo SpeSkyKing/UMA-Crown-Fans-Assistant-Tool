@@ -1,5 +1,5 @@
 import React from 'react';
-import {Acter} from '../../interface/Interface';
+import {Acter} from '../../interface/interface';
 export const ActerListData : React.FC<{ acter: Acter }> = ({acter}) => {
 
     function calculateAge(birthDate: Date): string {
