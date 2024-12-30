@@ -34,17 +34,17 @@ return new class extends Migration
         });
 
         Schema::create('regist_umamusume_table', function (Blueprint $table) {
-            $table->string('user_id');
+            $table->integer('user_id');
             $table->integer('umamusume_id');
             $table->date('regist_date');
-            $table->bigInteger('fans');
+            $table->bigInteger('fans')->nullabe();
             $table->foreign('umamusume_id')->references('umamusume_id')->on('umamusume_table')->onDelete('cascade');
             $table->foreign('user_id')->references('user_id')->on('user_table')->onDelete('cascade');
             $table->primary(['umamusume_id','user_id']);
         });
 
         Schema::create('regist_umamusume_race_table', function (Blueprint $table) {
-            $table->string('user_id');
+            $table->integer('user_id');
             $table->integer('umamusume_id');
             $table->integer('race_id');
             $table->date('regist_date');
@@ -55,7 +55,7 @@ return new class extends Migration
         });
 
         Schema::create('user_security_table', function (Blueprint $table) {
-            $table->string('user_id');
+            $table->integer('user_id');
             $table->date('email_accept_date');
             $table->date('password_changed_date');
             $table->boolean('two_facter_enabled');
@@ -68,7 +68,7 @@ return new class extends Migration
         });
 
         Schema::create('user_history_table', function (Blueprint $table) {
-            $table->string('user_id');
+            $table->integer('user_id');
             $table->date('login_date');
             $table->time('login_time');
             $table->string('login_ip');

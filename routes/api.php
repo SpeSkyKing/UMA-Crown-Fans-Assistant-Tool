@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RacelistController;
 use App\Http\Controllers\Api\UserPersonalController;
 use App\Http\Controllers\Api\ActerController;
-
+use App\Http\Controllers\Api\UmamusumeController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -19,13 +19,19 @@ Route::prefix('race')->group(function () {
     Route::get('registList', [RacelistController::class, 'raceRegistList']);
 });
 
+Route::prefix('umamusume')->group(function () {
+    Route::middleware('auth:sanctum')->get('registList', [UmamusumeController::class, 'registList']);
+    Route::middleware('auth:sanctum')->post('regist', [UmamusumeController::class, 'regist']);
+});
+
 Route::prefix('user')->group(function () {
     Route::post('regist', [UserPersonalController::class, 'regist']);
-    Route::post('login', [UserPersonalController::class, 'login']);
+    Route::post('login', [UserPersonalController::class, 'login'])->name('login');
+    Route::middleware('auth:sanctum')->post('logout', [UserPersonalController::class, 'logout']);
+    Route::middleware('auth:sanctum')->get('data', [UserPersonalController::class, 'getUserData']);
 });
 
 Route::prefix('acter')->group(function () {
     Route::apiResource('acterlist', ActerController::class);
     Route::get('acterlist', [ActerController::class, 'acterList']);
 });
-
