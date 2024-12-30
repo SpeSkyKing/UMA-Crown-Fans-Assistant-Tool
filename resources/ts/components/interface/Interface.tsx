@@ -31,6 +31,11 @@ export interface Umamusume{
     acter:Acter;
 }
 
+export interface RegistUmamusume{
+    umamusume:Umamusume;
+    fans:number;
+}
+
 export interface User{
     user_id:number;
     user_name:string;
