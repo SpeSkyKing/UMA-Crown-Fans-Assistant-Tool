@@ -9,6 +9,8 @@ use App\Models\Race;
 use App\Models\Umamusume;
 use App\Models\UmamusumeActer;
 use App\Models\ScenarioRace;
+use App\Models\Live;
+use App\Models\VocalUmamusume;
 
 class MakeUmamusumeData extends Seeder
 {
@@ -33,6 +35,10 @@ class MakeUmamusumeData extends Seeder
             $this->setActerTable($object['声優'],$index,$umamusumeCount);
             $umamusumeCount++;
         }
+
+        $liveJsonFiles = json_decode(Storage::disk('private')->get('json/Live.json'),true);
+        $this->setLiveTables($liveJsonFiles);
+
     }
 
     private function setRaceTables(array $raceJsonFiles){
@@ -123,13 +129,13 @@ class MakeUmamusumeData extends Seeder
                     foreach($objectScenarioRace as $scenarioRaceRandom){
                         $randomRace  = new ScenarioRace();
                         $raceId = Race::where('race_name',$scenarioRaceRandom)->first()->race_id;
-                        if(!is_null($raceId)){
+                        if(!is_null($raceId) && !ScenarioRace::where('race_id',$raceId)->where('umamusume_id',$count)->exists()){
                             $randomRace->umamusume_id = $count;
                             $randomRace->race_id =  $raceId;
                             $randomRace->race_number = $scenarioRaceCount;
                             $randomRace->random_group = $randomGroupId;
-                            echo $index.'にシナリオレースの'.$scenarioRaceRandom.'を登録しました。'.PHP_EOL;
                             $randomRace->save();
+                            echo $index.'にシナリオレースの'.$scenarioRaceRandom.'を登録しました。'.PHP_EOL;
                         }
                         $scenarioRaceCount++;
                     }
@@ -137,12 +143,12 @@ class MakeUmamusumeData extends Seeder
                 }else{
                     $scenarioRace  = new ScenarioRace();
                     $raceId = Race::where('race_name',$objectScenarioRace)->first()->race_id;
-                        if(!is_null($raceId)){
+                        if(!is_null($raceId) && !ScenarioRace::where('race_id',$raceId)->where('umamusume_id',$count)->exists()){
                         $scenarioRace->umamusume_id = $count;
                         $scenarioRace->race_id = $raceId;
                         $scenarioRace->race_number = $scenarioRaceCount;
-                        echo $index.'にシナリオレースの'.$objectScenarioRace.'を登録しました。'.PHP_EOL;
                         $scenarioRace->save();
+                        echo $index.'にシナリオレースの'.$objectScenarioRace.'を登録しました。'.PHP_EOL;
                     }
                     $scenarioRaceCount++;
                 }
@@ -174,6 +180,42 @@ class MakeUmamusumeData extends Seeder
             case '女':
                 return 2;
                 break;
+        }
+    }
+
+    private function setLiveTables(array $object){
+        $liveCount = 1;
+        foreach($object as $live){
+            if(!Live::where('live_name',$live['曲名'])->exists()){
+                $live_ = new Live();
+                $live_->live_id = $liveCount;
+                $live_->live_name = $live['曲名'];
+                $live_->composer = $live['作曲'];
+                $live_->arrager =  $live['編曲'];
+                $live_->save();
+            }
+            if($live['歌唱ウマ娘'][1] == 'all'){
+                $umamusumeArray = Umamusume::select('umamusume_id')->get();
+                foreach($umamusumeArray as $umamusume){
+                    if(!VocalUmamusume::where('live_id',$liveCount)->where('umamusume_id',$umamusume->umamusume_id)->exists()){
+                        $vocalUmamusume = new VocalUmamusume();
+                        $vocalUmamusume->live_id = $liveCount;
+                        $vocalUmamusume->umamusume_id = $umamusume->umamusume_id;
+                        $vocalUmamusume->save();
+                    }
+                }
+            }else{
+                foreach($live['歌唱ウマ娘'] as $liveUmamusume){
+                    $umamusmeData = Umamusume::where('umamusume_name',$liveUmamusume)->first();
+                    if(!VocalUmamusume::where('live_id',$liveCount)->where('umamusume_id',$umamusmeData->umamusume_id)->exists()){
+                        $vocalUmamusume = new VocalUmamusume();
+                        $vocalUmamusume->live_id = $liveCount;
+                        $vocalUmamusume->umamusume_id = $umamusmeData->umamusume_id;
+                        $vocalUmamusume->save();
+                    }
+                }
+            }
+            $liveCount++;
         }
     }
 }

@@ -75,7 +75,6 @@ return new class extends Migration
             $table->string('live_name');
             $table->string('composer');
             $table->string('arrager');
-            $table->string('phrase');
             $table->primary('live_id');
         });
     }
