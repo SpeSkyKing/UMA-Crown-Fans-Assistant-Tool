@@ -27,20 +27,13 @@ export const RaceList = () => {
         return <div className="min-h-full flex justify-center bg-Looding bg-cover"></div>
     }
     return (
-      <div className="min-h-full flex justify-center">
-      <div className="w-11/12 max-w-10xl rounded-lg p-6 shadow-lg relative">
-        
-        <div className="w-11/12 h-9/10 absolute inset-0 m-auto bg-white/50 rounded-lg shadow-lg overflow-auto p-4 scrollbar-hide">
-          <table className="table-auto w-full border-collapse border border-gray-300 ">
-            <RaceListHeader></RaceListHeader>
-            <tbody>
-            {races.map((race) => (
-              <RaceListdata race={race}></RaceListdata>
-            ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+      <table className="table-auto w-full border-collapse border border-gray-300 ">
+        <RaceListHeader></RaceListHeader>
+        <tbody>
+        {races.map((race) => (
+          <RaceListdata race={race}></RaceListdata>
+        ))}
+        </tbody>
+      </table>
     );
 };

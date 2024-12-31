@@ -9,7 +9,7 @@ export const CharacterRegistData : React.FC<CharacterRegistDataProps> = ({race,c
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const isChecked = e.target.checked;
-        onCheckboxChange(race.race_id, isChecked); // 親に変更を通知
+        onCheckboxChange(race.race_id, isChecked);
       };
 
     let raceDistance = "";

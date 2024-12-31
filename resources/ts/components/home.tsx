@@ -117,11 +117,16 @@ export const Home = () => {
         }
     }
     return (
-<div className="flex h-full" style={{ backgroundImage: `url(/storage/image/backgroundFile/${selectedContent}.PNG)`, backgroundSize: 'cover', backgroundPosition: 'center' }} >
-    <div className="!w-4/5">
-        <Content selectedContent={selectedContent} />
-    </div>
-
+    <div className="flex h-full" style={{ backgroundImage: `url(/storage/image/backgroundFile/${selectedContent}.PNG)`, backgroundSize: 'cover', backgroundPosition: 'center' }} >
+        <div className="!w-4/5">
+            <div className="min-h-full flex justify-center">
+                <div className="w-11/12 max-w-10xl rounded-lg p-6 shadow-lg relative">
+                    <div className="w-11/12 h-9/10 absolute inset-0 m-auto bg-white/50 rounded-lg shadow-lg overflow-auto p-4 scrollbar-hide">
+                        <Content selectedContent={selectedContent} />
+                    </div>
+                </div>
+            </div>    
+        </div>
     <div className="relative flex flex-col w-1/5 bg-umamusume-side bg-cover overflow-hidden bg-white/50">
         {isAuthenticated && (
             <div className=" text-white flex flex-col items-center justify-center w-full space-y-4">
