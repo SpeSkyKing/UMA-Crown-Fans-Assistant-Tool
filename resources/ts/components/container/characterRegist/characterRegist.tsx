@@ -127,10 +127,7 @@ export const CharacterRegist = () => {
     };
 
   return (
-    <div className="min-h-full">
-    <div className="w-full max-w-10xl rounded-lg p-6 shadow-lg relative">
-      <div className="w-full bg-white/50 rounded-lg shadow-lg overflow-auto p-4 scrollbar-hide">
-        
+      <div>
         <div className="flex gap-4 mb-6 sticky top-0 bg-white/50 z-10 p-4">
           <div className="w-1/2 h-96 flex-none rounded-full overflow-hidden shadow-lg">
           {/* 画像配置 */}
@@ -188,52 +185,49 @@ export const CharacterRegist = () => {
         </button> 
       </div>
 
-        <div className="mt-6">
-            <div className="overflow-y-auto max-h-[calc(100vh-22rem)] h-96">
-                <table className="table-auto w-full border-collapse border border-gray-300">
-                    <CharacterRegistHeader></CharacterRegistHeader>
-                <tbody>
-                    {races.map((race) => (
-                    <CharacterRegistData race={race} key={race.race_id} checked={race.checked} onCheckboxChange={handleCheckboxChange}
-                    ></CharacterRegistData>
-                    ))}
-                </tbody>
-                </table>
-            </div>
+      <div className="mt-6">
+        <div className="overflow-y-auto max-h-[calc(100vh-22rem)] h-96">
+            <table className="table-auto w-full border-collapse border border-gray-300">
+                  <CharacterRegistHeader></CharacterRegistHeader>
+              <tbody>
+                  {races.map((race) => (
+                  <CharacterRegistData race={race} key={race.race_id} checked={race.checked} onCheckboxChange={handleCheckboxChange}
+                  ></CharacterRegistData>
+                  ))}
+              </tbody>
+            </table>
+        </div>
 
   
-            <div className="mt-6 flex justify-center items-center space-x-4">
-      <label htmlFor="fans" className="text-xl text-pink-600 font-semibold" style={{ fontFamily: 'Poppins, sans-serif' }}>
-        獲得ファン数
-      </label>
-      <input
-        id="fans"
-        type="number"
-        className="p-2 border rounded-lg shadow-md mr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        value={fans}
-        onChange={handleFansChange}
-        placeholder="ファン数"
-        style={{
-          fontFamily: 'Dancing Script, cursive',
-          fontSize: '1.2rem',
-        }}
-      />
-      <button
-        className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white py-3 px-8 rounded-full shadow-lg hover:bg-gradient-to-l transform hover:scale-105 transition-all duration-300"
-        onClick={umamusumeRegist}
-        style={{
-          fontFamily: 'Poppins, sans-serif',
-          fontSize: '1.2rem',
-        }}
-      >
-        登録
-      </button>
-    </div>
+        <div className="mt-6 flex justify-center items-center space-x-4">
+          <label htmlFor="fans" className="text-xl text-pink-600 font-semibold" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            獲得ファン数
+          </label>
+          <input
+            id="fans"
+            type="number"
+            className="p-2 border rounded-lg shadow-md mr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={fans}
+            onChange={handleFansChange}
+            placeholder="ファン数"
+            style={{
+              fontFamily: 'Dancing Script, cursive',
+              fontSize: '1.2rem',
+            }}
+          />
+          <button
+            className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white py-3 px-8 rounded-full shadow-lg hover:bg-gradient-to-l transform hover:scale-105 transition-all duration-300"
+            onClick={umamusumeRegist}
+            style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: '1.2rem',
+            }}
+            >
+            登録
+          </button>
         </div>
       </div>
     </div>
-  </div>
-  
   );
 };
 

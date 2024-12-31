@@ -1,6 +1,7 @@
 import { Header } from "../../common/header";
 
 const remainingRaceListHeaderItem = [
+    {display:'出走処理'},
     {display:'ウマ娘名'},
     {display:'総数'},
     {display:'芝・短距離'},

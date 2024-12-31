@@ -9,6 +9,7 @@ use App\Models\RegistUmamusume;
 use App\Models\RegistUmamusumeRace;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class RaceController extends Controller
 {
@@ -89,5 +90,52 @@ class RaceController extends Controller
             $results[] = $result;
         }
         return response()->json(['data' => $results]);
+    }
+
+    public function remainingToRace(Request $request){
+        $userId = Auth::user()->user_id;
+        $umamusumeId = $request->json('umamusumeId');
+        $season = $request->json('season');
+        $month = $request->json('month');
+        $half = $request->json('half');
+
+        $registUmamusumeRaceArray = RegistUmamusumeRace::where('user_id', $userId)
+        ->where('umamusume_id',$umamusumeId)->pluck('race_id')->toArray();
+
+        $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3]);
+
+        switch($season){
+            case 1:
+                $race = $remainingAllRace->where('half_flag',$half)->where('race_months',$month)->where('junior_flag',1)->get();
+            break;
+            case 2:
+                $race = $remainingAllRace->where('half_flag',$half)->where('race_months',$month)->where('classic_flag',1)->get();
+            break;
+            case 3:
+                $race = $remainingAllRace->where('half_flag',$half)->where('race_months',$month)->where('senior_flag',1)->get();
+            break;
+        }
+        return response()->json(['data' => $race]);
+    }
+
+    public function raceRun (Request $request){
+        $userId = Auth::user()->user_id;
+        $umamusumeId = $request->json('umamusumeId');
+        $raceId = $request->json('raceId');
+        try{
+            $registUmamusumeRace = new RegistUmamusumeRace();
+            $registUmamusumeRace->user_id = $userId;
+            $registUmamusumeRace->umamusume_id = $umamusumeId;
+            $registUmamusumeRace->race_id = $raceId;
+            $registUmamusumeRace->regist_date = Carbon::now();
+            $registUmamusumeRace->save();
+        }catch (\Exception $e) {
+            Log::error('ウマ娘出走エラー:', $e->getMessage());
+            return response()->json(['error' => 'ウマ娘出走エラー'], 500);
+        }
+
+        return response()->json([
+            'message' => '出走完了'
+        ], 201);
     }
 }

@@ -1,34 +1,54 @@
 import React from 'react';
-import {RemainingRaces} from '../interface/interface';
-export const RemainingRaceListData : React.FC<{ remainingRaces: RemainingRaces }> = ({remainingRaces}) => {
+import {Umamusume,RemainingRace} from '../interface/interface';
+type RemainingRaceListDataProps = {
+    remainingRace: RemainingRace;
+    checkRaces: (umamusume: Umamusume) => void;
+  };
+export const RemainingRaceListData : React.FC<RemainingRaceListDataProps> = ({remainingRace,checkRaces}) => {
+    const handleClick = () => {
+        checkRaces(remainingRace.umamusume);
+    };
     return (
         <tr>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRaces.umamusume.umamusume_name}
+                {remainingRace.isAllCrown ? (
+                    <span>全冠</span>
+                ) : (
+                    <button
+                        onClick={handleClick}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        出走
+                    </button>
+                )}
+            </td>
+
+            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            {remainingRace.umamusume.umamusume_name}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRaces.isAllCrown ? '全冠':remainingRaces.allCrownRace}
+            {remainingRace.isAllCrown ? '全冠':remainingRace.allCrownRace}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRaces.turfSprintRace}
+            {remainingRace.turfSprintRace}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRaces.turfMileRace}
+            {remainingRace.turfMileRace}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRaces.turfClassicRace}
+            {remainingRace.turfClassicRace}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRaces.turfLongDistanceRace}
+            {remainingRace.turfLongDistanceRace}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRaces.dirtMileRace}
+            {remainingRace.dirtMileRace}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRaces.dirtClassicRace}
+            {remainingRace.dirtClassicRace}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRaces.dirtLongDistanceRace}
+            {remainingRace.dirtLongDistanceRace}
             </td>
         </tr>
     );
