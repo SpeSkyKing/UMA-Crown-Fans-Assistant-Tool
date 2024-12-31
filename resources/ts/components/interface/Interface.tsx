@@ -15,6 +15,19 @@ export interface Race {
     checked:boolean;
 }
 
+export interface RemainingRace{
+    umamusume:Umamusume;
+    isAllCrown:boolean;
+    allCrownRace:number;
+    turfSprintRace:number;
+    turfMileRace:number;
+    turfClassicRace:number;
+    turfLongDistanceRace:number;
+    dirtMileRace:number;
+    dirtClassicRace:number;
+    dirtLongDistanceRace:number;
+}
+
 export interface Umamusume{
     umamusume_id:number;
     umamusume_name:string;
@@ -50,6 +63,13 @@ export interface User{
     state:boolean;
     role:boolean;
     api_token:string;
+}
+
+export interface Live{
+    live_name:string;
+    composer:string;
+    arranger:string;
+    umamusume:Umamusume;
 }
 
 export interface Acter{

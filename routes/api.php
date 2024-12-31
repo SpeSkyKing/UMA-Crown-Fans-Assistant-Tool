@@ -2,21 +2,22 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\RacelistController;
+use App\Http\Controllers\Api\RaceController;
 use App\Http\Controllers\Api\UserPersonalController;
 use App\Http\Controllers\Api\ActerController;
 use App\Http\Controllers\Api\UmamusumeController;
+use App\Http\Controllers\Api\LiveController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
 Route::prefix('race')->group(function () {
-    Route::apiResource('list', RacelistController::class);
-    Route::get('list', [RacelistController::class, 'raceList']);
-
-    Route::apiResource('registList', RacelistController::class);
-    Route::get('registList', [RacelistController::class, 'raceRegistList']);
+    Route::apiResource('list', RaceController::class);
+    Route::get('list', [RaceController::class, 'raceList']);
+    Route::apiResource('registList', RaceController::class);
+    Route::get('registList', [RaceController::class, 'raceRegistList']);
+    Route::middleware('auth:sanctum')->get('remaining', [RaceController::class, 'remaining']);
 });
 
 Route::prefix('umamusume')->group(function () {
@@ -36,3 +37,9 @@ Route::prefix('acter')->group(function () {
     Route::apiResource('acterlist', ActerController::class);
     Route::get('acterlist', [ActerController::class, 'acterList']);
 });
+
+Route::prefix('live')->group(function () {
+    Route::apiResource('list', LiveController::class);
+    Route::get('list', [LiveController::class, 'liveList']);
+});
+
