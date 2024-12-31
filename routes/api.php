@@ -18,6 +18,8 @@ Route::prefix('race')->group(function () {
     Route::apiResource('registList', RaceController::class);
     Route::get('registList', [RaceController::class, 'raceRegistList']);
     Route::middleware('auth:sanctum')->get('remaining', [RaceController::class, 'remaining']);
+    Route::middleware('auth:sanctum')->post('remainingToRace', [RaceController::class, 'remainingToRace']);
+    Route::middleware('auth:sanctum')->post('raceRun', [RaceController::class, 'raceRun']);
 });
 
 Route::prefix('umamusume')->group(function () {
