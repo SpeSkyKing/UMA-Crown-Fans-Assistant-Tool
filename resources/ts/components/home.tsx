@@ -10,9 +10,9 @@ export const Home = () => {
     const [selectedContent, setSelectedContent] = useState("characterRegist");
     const [isRegistering, setIsRegistering] = useState(false);
     const [userName, setUserName] = useState('');
+    const token = localStorage.getItem("auth_token");
 
     useEffect(() => {
-        const token = localStorage.getItem("auth_token");
         if (token) {
             setIsAuthenticated(true);
         }
@@ -86,7 +86,7 @@ export const Home = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+              'Authorization': `Bearer ${token}`,
             },
           });
       

@@ -56,4 +56,12 @@ class UmamusumeController extends Controller
             'message' => 'ユーザーが登録されました。'
         ], 201);
     }
+
+    public function userRegist(){
+        $userId = Auth::user()->user_id;
+
+        $registUmamusume = RegistUmamusume::where('user_id', $userId)->with('umamusume')->get();
+        
+        return response()->json(['data' => $registUmamusume]);
+    }
 }
