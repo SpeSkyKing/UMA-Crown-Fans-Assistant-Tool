@@ -191,7 +191,7 @@ class MakeUmamusumeData extends Seeder
                 $live_->live_id = $liveCount;
                 $live_->live_name = $live['曲名'];
                 $live_->composer = $live['作曲'];
-                $live_->arrager =  $live['編曲'];
+                $live_->arranger =  $live['編曲'];
                 $live_->save();
             }
             if($live['歌唱ウマ娘'][1] == 'all'){

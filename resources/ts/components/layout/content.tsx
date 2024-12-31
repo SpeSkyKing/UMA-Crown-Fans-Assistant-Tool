@@ -24,7 +24,7 @@ export const Content = ({ selectedContent }) => {
             return (
                 <RemainingRaceList></RemainingRaceList>
             );
-        case 'LiveList':
+        case 'liveList':
             return (
                 <LiveList></LiveList>
             );
