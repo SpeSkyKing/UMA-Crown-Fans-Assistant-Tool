@@ -15,6 +15,6 @@ const remainingRaceListHeaderItem = [
 
 export const RemainingRaceListHeader = () => {
     return (
-        <Header ItemArray={remainingRaceListHeaderItem}></Header>
+        <Header ItemArray={remainingRaceListHeaderItem} />
     );
 };

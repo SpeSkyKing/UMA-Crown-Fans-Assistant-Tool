@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import { Umamusume ,RemainingRace} from '../interface/interface';
+import { Umamusume ,RemainingRace} from '../../interface/interface';
 import {RemainingRaceListHeader} from './remainingRaceListHeader';
 import {RemainingRaceListData} from './remainingRaceListData';
 import {RemainingRaceListAuto} from './remainingRaceListAuto'
@@ -93,7 +93,7 @@ export const RemainingRaceList = () => {
         <RemainingRaceListHeader></RemainingRaceListHeader>
         <tbody>
           {remainingRaces.map((remainingRace) => (
-            <RemainingRaceListData remainingRace={remainingRace} checkRaces={openCheckRaces}></RemainingRaceListData>
+            <RemainingRaceListData remainingRace={remainingRace} checkRaces={openCheckRaces} />
           ))}
         </tbody>
       </table>

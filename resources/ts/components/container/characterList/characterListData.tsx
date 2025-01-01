@@ -1,6 +1,5 @@
-import {useState } from 'react';
-import {RegistUmamusume} from '../../interface/interface';
-export const CharacterListData : React.FC<{registUmamusume: RegistUmamusume}> = ({registUmamusume}) => {
+import {CharacterListDataProps} from '../../interface/props';
+export const CharacterListData : React.FC<CharacterListDataProps> = ({registUmamusume}) => {
     return (
         <tr>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">

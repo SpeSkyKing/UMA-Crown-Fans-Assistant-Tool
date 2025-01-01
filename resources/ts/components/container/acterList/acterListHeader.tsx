@@ -9,6 +9,6 @@ const ActerListHeaderItem = [
 
 export const ActerListHeader = () => {
     return (
-        <Header ItemArray={ActerListHeaderItem}></Header>
+        <Header ItemArray={ActerListHeaderItem} />
     );
 };

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Race,Umamusume } from '../../interface/Interface';
+import { Race,Umamusume } from '../../interface/interface';
 import {RemainingRaceListItem} from './remainingRaceListItem';
-
-export const RemainingRaceListManual : React.FC<{ umamusume: Umamusume }> = ({umamusume}) => {
+import {RemainingRaceListManualProps} from '../../interface/props';
+export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = ({umamusume}) => {
     const [selectedSeason, setSelectedSeason] = useState(1);
     const [selectedMonth, setSelectedMonth] = useState(7);
     const [selectedHalf, setSelectedHalf] = useState(1);
@@ -150,7 +150,7 @@ export const RemainingRaceListManual : React.FC<{ umamusume: Umamusume }> = ({um
                 </thead>
                 <tbody>
                     {races.map((race) => (
-                            <RemainingRaceListItem key={race.race_id} race={race} runRace={handleRunRace}></RemainingRaceListItem>
+                            <RemainingRaceListItem key={race.race_id} race={race} runRace={handleRunRace} />
                         )
                     )}
                 </tbody>

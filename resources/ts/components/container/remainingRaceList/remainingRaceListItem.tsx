@@ -1,9 +1,5 @@
 import React from 'react';
-import {Race} from '../interface/interface';
-type RemainingRaceListItemProps = {
-    race: Race;
-    runRace: (race_id: number) => void;
-  };
+import {RemainingRaceListItemProps} from '../../interface/props';
 export const RemainingRaceListItem : React.FC<RemainingRaceListItemProps> = ({race,runRace}) => {
     let raceDistance = "";
     switch (Number(race.distance)) {

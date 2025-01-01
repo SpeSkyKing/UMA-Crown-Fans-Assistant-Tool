@@ -12,6 +12,6 @@ const raceListHeaderItem = [
 
 export const CharacterRegistHeader = () => {
     return (
-        <Header ItemArray={raceListHeaderItem}></Header>
+        <Header ItemArray={raceListHeaderItem} />
     );
 };

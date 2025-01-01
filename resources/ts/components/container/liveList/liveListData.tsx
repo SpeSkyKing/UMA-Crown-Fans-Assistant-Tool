@@ -1,6 +1,6 @@
 import React from 'react';
-import {Live} from '../interface/interface';
-export const LiveListData : React.FC<{ live: Live }> = ({live}) => {
+import {LiveListDataProps} from '../../interface/props';
+export const LiveListData : React.FC<LiveListDataProps> = ({live}) => {
     return (
         <tr>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">

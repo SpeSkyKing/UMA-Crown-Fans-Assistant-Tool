@@ -1,6 +1,6 @@
 import React from 'react';
-import {Race} from '../../interface/interface';
-export const RaceListdata : React.FC<{ race: Race }> = ({race}) => {
+import {RaceListdataProps} from '../../interface/props';
+export const RaceListdata : React.FC<RaceListdataProps> = ({race}) => {
     let raceDistance = "";
     switch (Number(race.distance)) {
         case 1:

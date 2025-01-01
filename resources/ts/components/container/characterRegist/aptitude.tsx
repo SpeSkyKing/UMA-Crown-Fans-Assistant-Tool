@@ -1,5 +1,6 @@
 import React from 'react';
-export const Aptitude = ({ name, aptitude }: { name: string, aptitude: string }) => {
+import {AptitudeProps} from '../../interface/props';
+export const Aptitude : React.FC<AptitudeProps> = ({name,aptitude})=> {
     const getAptitudeColor = (aptitude: string) => {
         switch (aptitude) {
           case 'A':
@@ -22,11 +23,9 @@ export const Aptitude = ({ name, aptitude }: { name: string, aptitude: string })
       };
 
 return (
-<div className="flex flex-col items-center p-4 bg-gradient-to-b from-green-400 to-green-100 shadow-lg rounded-lg transition transform hover:scale-105 w-24 h-24">
-  <div className="font-poppins text-xl font-semibold">{name}</div>
-  <div className={`text-2xl ${getAptitudeColor(aptitude)} font-semibold`}>{aptitude}</div>
-</div>
-
-
+  <div className="flex flex-col items-center p-4 bg-gradient-to-b from-green-400 to-green-100 shadow-lg rounded-lg transition transform hover:scale-105 w-24 h-24">
+    <div className="font-poppins text-xl font-semibold">{name}</div>
+    <div className={`text-2xl ${getAptitudeColor(aptitude)} font-semibold`}>{aptitude}</div>
+  </div>
   );
 };

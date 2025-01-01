@@ -1,5 +1,5 @@
 import React, { useState,useEffect} from 'react';
-import {Race,Umamusume} from '../../interface/Interface';
+import {Race,Umamusume} from '../../interface/interface';
 import {CharacterRegistHeader} from './characterRegistHeader';
 import {CharacterRegistData} from './characterRegistData';
 import { Aptitude } from './aptitude';
@@ -162,17 +162,17 @@ export const CharacterRegist = () => {
             </div>
 
           <div className="flex justify-between gap-6 mt-2">
-            <Aptitude name="短距離" aptitude={selectedUmamusume?.sprint_aptitude}></Aptitude>
-            <Aptitude name="マイル" aptitude={selectedUmamusume?.mile_aptitude}></Aptitude>
-            <Aptitude name="中距離" aptitude={selectedUmamusume?.classic_aptitude}></Aptitude>
-            <Aptitude name="長距離" aptitude={selectedUmamusume?.long_distance_aptitude}></Aptitude>
+            <Aptitude name="短距離" aptitude={selectedUmamusume?.sprint_aptitude} />
+            <Aptitude name="マイル" aptitude={selectedUmamusume?.mile_aptitude} />
+            <Aptitude name="中距離" aptitude={selectedUmamusume?.classic_aptitude}/>
+            <Aptitude name="長距離" aptitude={selectedUmamusume?.long_distance_aptitude}/>
           </div>
 
           <div className="flex justify-between gap-6 mt-2">
-            <Aptitude name="逃げ" aptitude={selectedUmamusume?.front_runner_aptitude}></Aptitude>
-            <Aptitude name="先行" aptitude={selectedUmamusume?.early_foot_aptitude}></Aptitude>
-            <Aptitude name="差し" aptitude={selectedUmamusume?.midfield_aptitude}></Aptitude>
-            <Aptitude name="追込" aptitude={selectedUmamusume?.closer_aptitude}></Aptitude>
+            <Aptitude name="逃げ" aptitude={selectedUmamusume?.front_runner_aptitude}/>
+            <Aptitude name="先行" aptitude={selectedUmamusume?.early_foot_aptitude}/>
+            <Aptitude name="差し" aptitude={selectedUmamusume?.midfield_aptitude}/>
+            <Aptitude name="追込" aptitude={selectedUmamusume?.closer_aptitude}/>
           </div>
         </div>
       </div>
@@ -191,8 +191,7 @@ export const CharacterRegist = () => {
                   <CharacterRegistHeader></CharacterRegistHeader>
               <tbody>
                   {races.map((race) => (
-                  <CharacterRegistData race={race} key={race.race_id} checked={race.checked} onCheckboxChange={handleCheckboxChange}
-                  ></CharacterRegistData>
+                  <CharacterRegistData race={race} key={race.race_id} checked={race.checked} onCheckboxChange={handleCheckboxChange} />
                   ))}
               </tbody>
             </table>

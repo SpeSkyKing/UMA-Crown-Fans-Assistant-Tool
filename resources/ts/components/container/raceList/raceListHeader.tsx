@@ -13,6 +13,6 @@ const raceListHeaderItem = [
 
 export const RaceListHeader = () => {
     return (
-        <Header ItemArray={raceListHeaderItem}></Header>
+        <Header ItemArray={raceListHeaderItem} />
     );
 };

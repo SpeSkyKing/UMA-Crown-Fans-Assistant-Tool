@@ -1,6 +1,6 @@
 import React from 'react';
-import {Acter} from '../../interface/interface';
-export const ActerListData : React.FC<{ acter: Acter }> = ({acter}) => {
+import {ActerListDataProps} from '../interface/prpps';
+export const ActerListData : React.FC<ActerListDataProps> = ({acter}) => {
 
     function calculateAge(birthDate: Date): string {
         if (typeof birthDate === 'string') {

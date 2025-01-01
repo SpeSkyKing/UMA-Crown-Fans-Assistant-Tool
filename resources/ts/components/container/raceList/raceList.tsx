@@ -31,7 +31,7 @@ export const RaceList = () => {
         <RaceListHeader></RaceListHeader>
         <tbody>
         {races.map((race) => (
-          <RaceListdata race={race}></RaceListdata>
+          <RaceListdata race={race} />
         ))}
         </tbody>
       </table>

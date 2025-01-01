@@ -38,7 +38,7 @@ export const CharacterList = () => {
           <CharacterListHeader></CharacterListHeader>
           <tbody>
             {registUmamusumes.map((registUmamusume,index) => (
-              <CharacterListData key={index} registUmamusume={registUmamusume}></CharacterListData>
+              <CharacterListData key={index} registUmamusume={registUmamusume} />
             ))}
           </tbody>
         </table>
