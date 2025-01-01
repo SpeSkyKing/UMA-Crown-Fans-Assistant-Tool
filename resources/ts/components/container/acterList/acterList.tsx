@@ -31,7 +31,7 @@ export const ActerList = () => {
               <ActerListHeader></ActerListHeader>
               <tbody>
                 {acters.map((acter,index) => (
-                  <ActerListData key={index} acter={acter}></ActerListData>
+                  <ActerListData key={index} acter={acter} />
                 ))}
               </tbody>
           </table>

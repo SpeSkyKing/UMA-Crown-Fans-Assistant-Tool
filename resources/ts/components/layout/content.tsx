@@ -5,8 +5,9 @@ import {RaceList} from '../container/raceList/raceList';
 import {RemainingRaceList} from '../container/remainingRaceList/remainingRaceList';
 import {LiveList} from '../container/liveList/liveList';
 import {ActerList} from '../container/acterList/acterList';
+import {ContentProps} from '../interface/props';
 
-export const Content = ({ selectedContent }) => {
+export const Content :React.FC<ContentProps> = ({ selectedContent }) => {
     switch(selectedContent){
         case 'characterRegist':
             return (

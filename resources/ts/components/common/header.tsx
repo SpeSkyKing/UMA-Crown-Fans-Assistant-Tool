@@ -1,6 +1,5 @@
 import React from "react";
-import {HeaderProps,Item} from '../interface/interface';
-
+import {HeaderProps} from '../interface/props';
 export const Header: React.FC<HeaderProps> = ({ ItemArray }) => {
     return (
         <thead className="sticky top-0 bg-white z-10">

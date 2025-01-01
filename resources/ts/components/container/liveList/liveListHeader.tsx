@@ -6,6 +6,6 @@ const LiveListHeaderItem = [
 
 export const LiveListHeader = () => {
     return (
-        <Header ItemArray={LiveListHeaderItem}></Header>
+        <Header ItemArray={LiveListHeaderItem} />
     );
 };

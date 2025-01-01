@@ -1,10 +1,4 @@
-import {useState } from 'react';
-import {Race} from '../../interface/interface';
-type CharacterRegistDataProps = {
-    race: Race;
-    checked: boolean;
-    onCheckboxChange: (raceId: number,checked:boolean) => void;
-  };
+import {CharacterRegistDataProps} from '../../interface/props';
 export const CharacterRegistData : React.FC<CharacterRegistDataProps> = ({race,checked,onCheckboxChange}) => {
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

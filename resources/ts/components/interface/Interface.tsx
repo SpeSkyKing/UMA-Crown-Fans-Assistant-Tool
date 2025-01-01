@@ -81,11 +81,3 @@ export interface Acter{
     nickname:string;
     umamusume:Umamusume;
 }
-
-export interface Item {
-    display: string;
-}
-
-export interface HeaderProps {
-    ItemArray: Item[];
-}

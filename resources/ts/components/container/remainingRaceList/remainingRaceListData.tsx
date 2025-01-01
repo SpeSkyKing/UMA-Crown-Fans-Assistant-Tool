@@ -1,9 +1,5 @@
 import React from 'react';
-import {Umamusume,RemainingRace} from '../interface/interface';
-type RemainingRaceListDataProps = {
-    remainingRace: RemainingRace;
-    checkRaces: (umamusume: Umamusume) => void;
-  };
+import {RemainingRaceListDataProps} from '../../interface/props';
 export const RemainingRaceListData : React.FC<RemainingRaceListDataProps> = ({remainingRace,checkRaces}) => {
     const handleClick = () => {
         checkRaces(remainingRace.umamusume);

@@ -15,7 +15,7 @@ class UserPersonalController extends Controller
     {
         try {
             $validated = $request->validate([
-                'user_name' => ['required', 'string', 'unique:user_table'],
+                'userName' => ['required', 'string', 'unique:user_table'],
                 'password' => ['required', 'string', 'min:7'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:user_table'],
                 'phone' => ['required', 'string', 'max:255'],
@@ -39,7 +39,7 @@ class UserPersonalController extends Controller
         try {
             $user = new UserPersonal();
             $user->user_id = UserPersonal::max('user_id') + 1 ?: 1;
-            $user->user_name = $validated['user_name'];
+            $user->user_name = $validated['userName'];
             $user->password = Hash::make($validated['password']);
             $user->email = $validated['email'];
             $user->phone_number = $validated['phone'];
@@ -65,11 +65,11 @@ class UserPersonalController extends Controller
     public function login(Request $request) 
     {
         $request->validate([
-            'user_name' => 'required|string',
+            'userName' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $user = UserPersonal::where('user_name', $request->user_name)->first();
+        $user = UserPersonal::where('user_name', $request->userName)->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
 

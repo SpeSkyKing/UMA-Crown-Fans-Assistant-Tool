@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Live} from '../interface/interface';
+import {Live} from '../../interface/interface';
 import {LiveListHeader} from './liveListHeader';
 import {LiveListData} from './liveListData';
 export const LiveList = () => {
@@ -31,7 +31,7 @@ export const LiveList = () => {
           <LiveListHeader></LiveListHeader>
           <tbody>
           {lives.map((live) => (
-            <LiveListData live={live}></LiveListData>
+            <LiveListData live={live} />
           ))}
           </tbody>
         </table>
