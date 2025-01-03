@@ -42,6 +42,10 @@ export interface CharacterRegistDataProps {
 }
 export interface LiveListDataProps {
     live: Live;
+    onClick: (live : Live) => void;
+}
+export interface LiveListCharacterDataProps{
+    umamusume: Umamusume;
 }
 export interface RaceListdataProps {
     race: Race;
@@ -56,6 +60,11 @@ export interface RemainingRaceListItemProps {
 }
 export interface RemainingRaceListManualProps {
     umamusume: Umamusume;
+    onReturn: () => void;
+}
+export interface RemainingRaceListAutoProps {
+    umamusume: Umamusume;
+    onReturn: () => void;
 }
 export interface ContentProps {
     selectedContent:string;

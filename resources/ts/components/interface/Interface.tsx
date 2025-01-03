@@ -23,9 +23,9 @@ export interface RemainingRace{
     turfMileRace:number;
     turfClassicRace:number;
     turfLongDistanceRace:number;
+    dirtSprintDistanceRace:number;
     dirtMileRace:number;
     dirtClassicRace:number;
-    dirtLongDistanceRace:number;
 }
 
 export interface Umamusume{
@@ -66,6 +66,7 @@ export interface User{
 }
 
 export interface Live{
+    live_id:number;
     live_name:string;
     composer:string;
     arranger:string;
