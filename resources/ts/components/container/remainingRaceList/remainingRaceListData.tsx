@@ -38,13 +38,13 @@ export const RemainingRaceListData : React.FC<RemainingRaceListDataProps> = ({re
             {remainingRace.turfLongDistanceRace}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            {remainingRace.dirtSprintDistanceRace}
+            </td>
+            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
             {remainingRace.dirtMileRace}
             </td>
             <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
             {remainingRace.dirtClassicRace}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {remainingRace.dirtLongDistanceRace}
             </td>
         </tr>
     );

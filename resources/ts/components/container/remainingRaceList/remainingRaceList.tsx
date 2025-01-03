@@ -42,6 +42,8 @@ export const RemainingRaceList = () => {
 
     const returnCheckRaces = () => {
       setIsCheckRace(false);
+      setIsAutoRaces(false);
+      setIsManualRaces(false);
     }
 
     const onAutoRaces = () =>{
@@ -53,11 +55,11 @@ export const RemainingRaceList = () => {
     }
     
     if (isManualRaces) {
-      return <RemainingRaceListManual umamusume={selectUmamusume}></RemainingRaceListManual>
+      return <RemainingRaceListManual umamusume={selectUmamusume} onReturn={returnCheckRaces}></RemainingRaceListManual>
     }
 
     if (isAutoRaces) {
-      return <RemainingRaceListAuto></RemainingRaceListAuto>
+      return <RemainingRaceListAuto umamusume={selectUmamusume} onReturn={returnCheckRaces}></RemainingRaceListAuto>
     }
 
     if (loading) {
@@ -75,10 +77,10 @@ export const RemainingRaceList = () => {
                 onClick={onManualRaces}>
                     手動出走
                 </button>
-                <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg text-xl"
+                {/* <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg text-xl"
                 onClick={onAutoRaces}>
                     出走計算
-                </button>
+                </button> */}
                 <button className="bg-red-500 hover:bg-gray-700 text-white font-bold py-4 px-8 rounded-lg" 
                 onClick={returnCheckRaces}>
                     戻る
