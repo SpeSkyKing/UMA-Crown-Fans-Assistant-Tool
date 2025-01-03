@@ -22,6 +22,6 @@ class VocalUmamusume extends Model
      * 多対1を明示的に表示
      */
     public function Umamusume(){
-        return $this->hasOne(Umamusume::class,'user_id','user_id');   
+        return $this->hasOne(Umamusume::class,'umamusume_id','umamusume_id');   
     }
 }

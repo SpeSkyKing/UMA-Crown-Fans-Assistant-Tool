@@ -75,7 +75,7 @@ export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
                 id="avatar"
                 label="アバター画像"
                 type="file"
-                value={avatar ? avatar.name : ''}
+                value={avatar ? avatar : ''}
                 placeholder="画像を選択してください"
                 onChange={(e) => setAvatar(e.target.files ? e.target.files[0] : null)}
                 accept="image/*"/>

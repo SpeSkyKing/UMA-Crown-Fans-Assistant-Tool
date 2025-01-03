@@ -20,6 +20,7 @@ Route::prefix('race')->group(function () {
     Route::middleware('auth:sanctum')->get('remaining', [RaceController::class, 'remaining']);
     Route::middleware('auth:sanctum')->post('remainingToRace', [RaceController::class, 'remainingToRace']);
     Route::middleware('auth:sanctum')->post('raceRun', [RaceController::class, 'raceRun']);
+    Route::middleware('auth:sanctum')->post('remainingPattern', [RaceController::class, 'remainingPattern']);
 });
 
 Route::prefix('umamusume')->group(function () {
@@ -43,5 +44,6 @@ Route::prefix('acter')->group(function () {
 Route::prefix('live')->group(function () {
     Route::apiResource('list', LiveController::class);
     Route::get('list', [LiveController::class, 'liveList']);
+    Route::middleware('auth:sanctum')->post('umamusumeList', [LiveController::class, 'umamusumeList']);
 });
 

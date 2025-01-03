@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\UserPersonal;
+use App\Models\UserHistory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Jenssegers\Agent\Agent;
+use Stevebauman\Location\Facades\Location;
+use Carbon\Carbon;
 
 class UserPersonalController extends Controller
 {
@@ -75,6 +79,26 @@ class UserPersonalController extends Controller
 
             $token = $user->createToken('UMA-Crown-Fans-Assistant-Tool')->plainTextToken;
 
+            try{
+                $agent = new Agent();
+                $loginIp = request()->ip();
+                $position = Location::get($loginIp);
+                $userHistory = new UserHistory();
+                $userHistory->user_id = $user->user_id;
+                $userHistory->login_date = Carbon::now()->toDateString();
+                $userHistory->login_time = Carbon::now()->toTimeString();
+                $userHistory->login_ip = $loginIp;
+                $userHistory->login_os = $agent->platform();
+                $userHistory->login_browser = $agent->browser();
+                $userHistory->login_device = $agent->isDesktop() ? 'Desktop' : ($agent->isTablet() ? 'Tablet' : ($agent->isMobile() ? 'Mobile' : 'Unknown'));
+                $userHistory->login_rendering_engine = $agent->getUserAgent(); 
+                $userHistory->login_location  = $position ? $position->city . ', ' . $position->countryName : 'Unknown';
+                $userHistory->save();
+            } catch (\Exception $e) {
+                Log::error('ユーザー履歴登録エラー:', $e->getMessage());
+                return response()->json(['error' => 'ユーザー履歴登録エラー'], 500);
+            }
+
             return response()->json([
                 'message' => 'ログイン成功',
                 'token' => $token,
@@ -84,7 +108,7 @@ class UserPersonalController extends Controller
         return response()->json(['message' => '認証失敗'], 401);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
         Auth::user()->tokens->each(function ($token) {
             $token->delete();
