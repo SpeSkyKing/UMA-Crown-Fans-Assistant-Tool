@@ -32,7 +32,7 @@ ReactとLaravelを使用して構築され、ユーザーに対してシンプ�
 
 ## 使用技術
 
-- **フロントエンド**: React.js,TypeScript,Tailwind CSS
-- **バックエンド**: Laravel 11, MySQL
+- **フロントエンド**: React.js ,TypeScript ,Tailwind CSS
+- **バックエンド**: Laravel 11 ,PHP ,MySQL
 - **データベース**: MySQL
 
