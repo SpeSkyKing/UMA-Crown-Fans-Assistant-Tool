@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Jenssegers\Agent\Agent;
-use Stevebauman\Location\Facades\Location;
 use Carbon\Carbon;
 
 class UserPersonalController extends Controller
@@ -82,7 +81,6 @@ class UserPersonalController extends Controller
             try{
                 $agent = new Agent();
                 $loginIp = request()->ip();
-                $position = Location::get($loginIp);
                 $userHistory = new UserHistory();
                 $userHistory->user_id = $user->user_id;
                 $userHistory->login_date = Carbon::now()->toDateString();
@@ -92,7 +90,7 @@ class UserPersonalController extends Controller
                 $userHistory->login_browser = $agent->browser();
                 $userHistory->login_device = $agent->isDesktop() ? 'Desktop' : ($agent->isTablet() ? 'Tablet' : ($agent->isMobile() ? 'Mobile' : 'Unknown'));
                 $userHistory->login_rendering_engine = $agent->getUserAgent(); 
-                $userHistory->login_location  = $position ? $position->city . ', ' . $position->countryName : 'Unknown';
+                
                 $userHistory->save();
             } catch (\Exception $e) {
                 Log::error('ユーザー履歴登録エラー:',['error_message' => $e->getMessage()] );
