@@ -37,6 +37,7 @@ export interface ActerListDataProps {
 
 export interface CharacterListDataProps {
     registUmamusume: RegistUmamusume;
+    returnFanUp:(registUmamusume:RegistUmamusume) => void;
 }
 
 export interface AptitudeProps {
