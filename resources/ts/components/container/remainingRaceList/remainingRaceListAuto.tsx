@@ -21,7 +21,7 @@ export const RemainingRaceListAuto: React.FC<RemainingRaceListAutoProps>  = ({um
                   headers: {
                     "Authorization": `Bearer ${token}`,
                   },
-                  body: JSON.stringify({umamusumeId:selectUmamsume.umamusume_id}),
+                  body: JSON.stringify({umamusumeId:selectUmamsume?.umamusume_id}),
                 });
                 const responseJson = await response.json();
                 const data = responseJson.data;

@@ -8,7 +8,7 @@ export const RemainingRaceList = () => {
     const [remainingRaces, setRemainingRaces] = useState<RemainingRace[]>([]);
     const [loading,setLoading] = useState(true);
     const [isCheckRace,setIsCheckRace] = useState(false);
-    const [selectUmamusume,setSelectUmamusume] = useState<Umamusume>();
+    const [selectUmamusume, setSelectUmamusume] = useState<Umamusume | undefined>(undefined);
     const [isAutoRaces,setIsAutoRaces] = useState(false);
     const [isManualRaces,setIsManualRaces] = useState(false);
     const token = localStorage.getItem('auth_token');
@@ -70,7 +70,7 @@ export const RemainingRaceList = () => {
       return (
         <div className="table-auto w-full h-screen flex flex-col items-center justify-center">
           <div className="text-center text-2xl font-bold text-black my-6">
-                {selectUmamusume.umamusume_name}
+                {selectUmamusume?.umamusume_name}
           </div>
             <div className="flex flex-col space-y-6">
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-xl"
