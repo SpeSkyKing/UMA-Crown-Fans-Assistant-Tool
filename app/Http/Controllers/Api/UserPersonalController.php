@@ -19,9 +19,9 @@ class UserPersonalController extends Controller
     {
         try {
             $validated = $request->validate([
-                'userName' => ['required', 'string', 'unique:user_table'],
+                'userName' => ['required', 'string'],
                 'password' => ['required', 'string', 'min:7'],
-                'email' => ['required', 'string', 'email', 'max:255', 'unique:user_table'],
+                'email' => ['required', 'string', 'email', 'max:255'],
                 'phone' => ['required', 'string', 'max:255'],
                 'birthday' => ['required', 'date'],
                 'gender' => ['required', 'in:0,1,2'], 
