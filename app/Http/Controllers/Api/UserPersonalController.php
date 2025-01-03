@@ -95,7 +95,7 @@ class UserPersonalController extends Controller
                 $userHistory->login_location  = $position ? $position->city . ', ' . $position->countryName : 'Unknown';
                 $userHistory->save();
             } catch (\Exception $e) {
-                Log::error('ユーザー履歴登録エラー:', $e->getMessage());
+                Log::error('ユーザー履歴登録エラー:',['error_message' => $e->getMessage()] );
                 return response()->json(['error' => 'ユーザー履歴登録エラー'], 500);
             }
 
