@@ -64,4 +64,16 @@ class UmamusumeController extends Controller
         
         return response()->json(['data' => $registUmamusume]);
     }
+
+    public function fanUp(Request $request){
+        $userId = Auth::user()->user_id;
+        $umamusumeId = $request->json('umamusumeId');
+        $fans = $request->json('fans');
+        RegistUmamusume::where('user_id', $userId)->where('umamusume_id',$umamusumeId)
+        ->update(['fans' => $fans]);
+
+        return response()->json([
+            'message' => 'ファン数が変更されました'
+        ], 201);
+    }
 }

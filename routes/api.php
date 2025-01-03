@@ -27,6 +27,7 @@ Route::prefix('umamusume')->group(function () {
     Route::middleware('auth:sanctum')->get('registList', [UmamusumeController::class, 'registList']);
     Route::middleware('auth:sanctum')->post('regist', [UmamusumeController::class, 'regist']);
     Route::middleware('auth:sanctum')->get('userRegist', [UmamusumeController::class, 'userRegist']);
+    Route::middleware('auth:sanctum')->post('fanUp', [UmamusumeController::class, 'fanUp']);
 });
 
 Route::prefix('user')->group(function () {
