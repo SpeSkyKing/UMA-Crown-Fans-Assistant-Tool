@@ -82,3 +82,8 @@ export interface Acter{
     nickname:string;
     umamusume:Umamusume;
 }
+
+export interface RaceEntryPattern{
+    requiredsFactor:string[],
+    selectScenario:string
+}
