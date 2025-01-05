@@ -22,3 +22,4 @@ yarn-error.log
 /.vscode
 /.zed
 phpmyadmin/sessions/*
+./docker-compose.yml

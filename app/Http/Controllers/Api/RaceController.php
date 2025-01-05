@@ -34,15 +34,10 @@ class RaceController extends Controller
 
     public function raceRegistList()
     {
-        $races = Race::orderByRaw("CASE
-        WHEN junior_flag = 1 THEN 1
-        WHEN classic_flag = 1 THEN 2
-        WHEN senior_flag = 1 THEN 3
-        ELSE 4 END")
-        ->orderBy('race_months', 'asc') 
-        ->orderBy('half_flag', 'asc')
+        $races = Race::whereIn('race_rank', [1, 2, 3])
         ->orderBy('race_rank', 'asc')
-        ->whereIn('race_rank',[1,2,3])
+        ->orderBy('race_months', 'asc')
+        ->orderBy('half_flag', 'asc')
         ->get();
 
         return response()->json(['data' => $races]);
