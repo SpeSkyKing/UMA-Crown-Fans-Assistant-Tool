@@ -205,7 +205,7 @@ export const CharacterRegist = () => {
           <input
             id="fans"
             type="number"
-            className="p-2 border rounded-lg shadow-md mr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="p-2 border rounded-lg shadow-md mr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-right"  // text-rightで数字を右寄せ
             value={fans}
             onChange={handleFansChange}
             placeholder="ファン数"

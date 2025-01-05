@@ -93,8 +93,8 @@ export const Home = () => {
     <div className="flex h-full" style={{ backgroundImage: `url(/storage/image/backgroundFile/${selectedContent}.PNG)`, backgroundSize: 'cover', backgroundPosition: 'center' }} >
         <div className="!w-4/5">
             <div className="min-h-full flex justify-center">
-                <div className="w-11/12 max-w-10xl rounded-lg p-6 shadow-lg relative">
-                    <div className="w-11/12 h-9/10 absolute inset-0 m-auto bg-white/50 rounded-lg shadow-lg overflow-auto p-4 scrollbar-hide">
+                <div className="w-full max-w-10xl rounded-lg p-6 shadow-lg relative">
+                    <div className="w-15/16 h-9/10 absolute inset-0 m-auto bg-white/50 rounded-lg shadow-lg overflow-auto p-4 scrollbar-hide">
                         <Content selectedContent={selectedContent} ></Content>
                     </div>
                 </div>

@@ -34,15 +34,10 @@ class RaceController extends Controller
 
     public function raceRegistList()
     {
-        $races = Race::orderByRaw("CASE
-        WHEN junior_flag = 1 THEN 1
-        WHEN classic_flag = 1 THEN 2
-        WHEN senior_flag = 1 THEN 3
-        ELSE 4 END")
-        ->orderBy('race_months', 'asc') 
-        ->orderBy('half_flag', 'asc')
+        $races = Race::whereIn('race_rank', [1, 2, 3])
         ->orderBy('race_rank', 'asc')
-        ->whereIn('race_rank',[1,2,3])
+        ->orderBy('race_months', 'asc')
+        ->orderBy('half_flag', 'asc')
         ->get();
 
         return response()->json(['data' => $races]);
@@ -183,178 +178,157 @@ class RaceController extends Controller
     }
 
     public function remainingPattern(Request $request){
+        
         $userId = Auth::user()->user_id;
+
         $umamusumeId = $request->json('umamusumeId');
 
-        $results = array();
+        $this->selectUmamusume = Umamusume::where('umamusume_id',$umamusumeId)->first();
 
         $registUmamusumeRaceArray = RegistUmamusumeRace::where('user_id', $userId)
         ->where('umamusume_id',$umamusumeId)->pluck('race_id')->toArray();
 
-        $scenarioRaceArray = ScenarioRace::where('umamusume_id', $umamusumeId)->pluck('race_id')->toArray();
-
-        $scenarioRaceTimes = ScenarioRace::whereIn('race_id', $scenarioRaceArray)
-            ->select('race_id','senior_flag','classic_flag','junior_flag','race_months','half_flag')
-            ->distinct()
-            ->get();
-
-        $matchingRaceIds = $scenarioRaceTimes->flatMap(function ($time) use ($remainingAllRace) {
-            return $remainingAllRace->filter(function ($race) use ($time) {
-                return $race->race_months == $time->race_months && $race->half_flag == $time->half_flag
-                && $race->classic_flag == $time->classic_flag  && $race->junior_flag == $time->junior_flag
-                && $race->senior_flag == $time->senior_flag;
-            })->pluck('race_id');
-        })->unique()->values();
-        
-
         $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3]);
 
-        $remainingAllRaceData = (clone $remainingAllRace)->get();
-
-        //
-
-        if(!(clone $remainingAllRace)->where('scenario_flag',1)->doesntExist()){
-            $selectScenario = 'Lark';
-        }
-
-        if(collect($remainingAllRaceData)->pluck('race_id')->intersect($scenarioRaceArray)->isNotEmpty()){
-            
-        }
-
-
-
-        $raceCounts = [
-            '芝_短距離'        => (clone $remainingAllRace)->where('race_state',0)->where('distance',1)->count(),
-            '芝_マイル'        => (clone $remainingAllRace)->where('race_state',0)->where('distance',2)->count(),
-            '芝_中距離'        => (clone $remainingAllRace)->where('race_state',0)->where('distance',3)->count(),
-            '芝_長距離'        => (clone $remainingAllRace)->where('race_state',0)->where('distance',4)->count(),
-            'ダート_短距離'     => (clone $remainingAllRace)->where('race_state',1)->where('distance',1)->count(),
-            'ダート_マイル'     => (clone $remainingAllRace)->where('race_state',1)->where('distance',2)->count(),
-            'ダート_中距離'     => (clone $remainingAllRace)->where('race_state',1)->where('distance',3)->count(),
-        ];
-
-        $maxRaceCount = max($raceCounts);
-
-        $maxRaceKey = array_search($maxRaceCount, $raceCounts);
-
-        list($maxRaceType, $maxDistance) = explode('_', $maxRaceKey);
-
-        $this->selectUmamusume = Umamusume::where('umamusume_id',$umamusumeId)->first();
+        $remainingAllRaceCollections = (clone $remainingAllRace)->get();
+        $rankRace = $this->getRankedRaceCounts(clone $remainingAllRace);
 
         $requiredsFactor = array();
-        if($maxRaceType == '芝'){
-            $this->setRequiredsFactor($this->selectUmamusume->turf_aptitude,$maxRaceType,'turf_aptitude',$requiredsFactor);
-        }else{
-            $this->setRequiredsFactor($this->selectUmamusume->dirt_aptitude,$maxRaceType,'dirt_aptitude',$requiredsFactor);
-        }
 
-        switch($maxDistance){
-            case '短距離':
-                $this->setRequiredsFactor($this->selectUmamusume->sprint_aptitude,$maxDistance,'sprint_aptitude',$requiredsFactor);
-            break;
-            case 'マイル':
-                $this->setRequiredsFactor($this->selectUmamusume->mile_aptitude,$maxDistance,'mile_aptitude',$requiredsFactor);
-            break;
-            case '中距離':
-                $this->setRequiredsFactor($this->selectUmamusume->classic_aptitude,$maxDistance,'classic_aptitude',$requiredsFactor);
-            break;
-            case '長距離':
-                $this->setRequiredsFactor($this->selectUmamusume->long_distance_aptitude,$maxDistance,'long_distance_aptitude',$requiredsFactor);
-            break;
-        }
-
-        $racePriority = $this->setRacePriority($this->selectUmamusume);
-
-        $races = array();
-
-        for($season = 1 ; $season < 4 ; $season++){
-            for($month = 1 ; $month < 13 ; $month++){
-                for($half = 0 ; $half < 2 ; $half++){
-                    if($season == 1 && $month < 7 ){
-                        if($month == 7 && $half == 0){
-                            continue;
-                        }
-                    }else{
-                        $race = null;
-                        for($priority = 0 ; $priority < 7 ; $priority++){
-                            if(!is_null($race)){
-                                break;
-                            }
-                            $raceKey = $racePriority[$priority];
-                            list($state, $distance) = explode('_', $raceKey);
-                            switch($season){
-                                case 1:
-                                    $race = (clone $remainingAllRace)->where('half_flag',$half)->where('race_months',$month)->where('junior_flag',1)
-                                    ->where('race_state',(int)$state)->where('distance',(int)$distance)->first();
-                                break;
-                                case 2:
-                                    $race = (clone $remainingAllRace)->where('half_flag',$half)->where('race_months',$month)->where('classic_flag',1)
-                                    ->where('race_state',(int)$state)->where('distance',(int)$distance)->first();
-                                break;
-                                case 3:
-                                    $race = (clone $remainingAllRace)->where('half_flag',$half)->where('race_months',$month)->where('senior_flag',1)
-                                    ->where('race_state',(int)$state)->where('distance',(int)$distance)->first();
-                                break;
-                            }
-                        }
-                        $races[] = $race;
-                    }
-                }
+        for($i = 0 ; $i < 7 ; $i++){
+            if($rankRace[$i]['race_type'] == '芝'){
+                $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->turf_aptitude,$rankRace[$i]['race_type'],$requiredsFactor);
+            }else{
+                $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->dirt_aptitude,$rankRace[$i]['race_type'],$requiredsFactor);
+            }
+            if(count($requiredsFactor) == 6){
+                break;
+            }
+    
+            switch($rankRace[$i]['distance']){
+                case '短距離':
+                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->sprint_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                break;
+                case 'マイル':
+                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->mile_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                break;
+                case '中距離':
+                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->classic_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                break;
+                case '長距離':
+                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->long_distance_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                break;
+            }
+            if(count($requiredsFactor) == 6){
+                break;
             }
         }
 
-        $result = [
-            'race' => $races,
-            'requiredsFactor' => $requiredsFactor
-        ];
+        $result= array();
 
-        //
-        $results[] = $result;
+        $result['requiredsFactor'] = $requiredsFactor;
 
-        return response()->json(['data' => $results]);
+        $scenarioRaceArray = ScenarioRace::where('umamusume_id', $umamusumeId)->pluck('race_id')->toArray();
+
+        $scenarioRaceTimes = Race::whereIn('race_id', $scenarioRaceArray)
+        ->select('race_id', 'senior_flag', 'classic_flag', 'junior_flag', 'race_months', 'half_flag')
+        ->distinct()
+        ->get();
+
+        $scenarioMatchingRaceIds = $scenarioRaceTimes->flatMap(function ($time) use ($remainingAllRaceCollections) {
+            return $remainingAllRaceCollections->filter(function ($race) use ($time) {
+                return $race->race_months == $time->race_months && $race->half_flag == $time->half_flag
+                && $race->classic_flag == $time->classic_flag  && ($race->junior_flag == $time->junior_flag
+                || $race->senior_flag == $time->senior_flag);
+            })->pluck('race_id');
+        })->unique()->values();
+
+        if(!is_null($scenarioMatchingRaceIds)){
+            if($this->checkLarc(clone $remainingAllRace)){
+                $result['selectScenario'] = 'Larc';
+            }else{
+                $result['selectScenario'] = 'メイクラ';
+            }
+            return response()->json(['data' => $result]);
+        }
     }
 
-    private function setRequiredsFactor(string $aptitude,string $aptitudeType,string $aptitudeDBName,array $array){
+    private function getRankedRaceCounts($remainingAllRace)
+    {
+        $raceCounts = [
+            '芝_短距離'        => (clone $remainingAllRace)->where('race_state', 0)->where('distance', 1)->count(),
+            '芝_マイル'        => (clone $remainingAllRace)->where('race_state', 0)->where('distance', 2)->count(),
+            '芝_中距離'        => (clone $remainingAllRace)->where('race_state', 0)->where('distance', 3)->count(),
+            '芝_長距離'        => (clone $remainingAllRace)->where('race_state', 0)->where('distance', 4)->count(),
+            'ダート_短距離'    => (clone $remainingAllRace)->where('race_state', 1)->where('distance', 1)->count(),
+            'ダート_マイル'    => (clone $remainingAllRace)->where('race_state', 1)->where('distance', 2)->count(),
+            'ダート_中距離'    => (clone $remainingAllRace)->where('race_state', 1)->where('distance', 3)->count(),
+        ];
+
+        arsort($raceCounts);
+
+        $rankedRaceCounts = [];
+        $rank = 1;
+
+        foreach ($raceCounts as $key => $count) {
+            list($raceType, $distance) = explode('_', $key);
+    
+            $rankedRaceCounts[] = [
+                'race_type' => $raceType,
+                'distance'  => $distance,
+                'count'     => $count,
+                'rank'      => $rank,
+            ];
+    
+            $rank++;
+        }
+    
+
+        return $rankedRaceCounts;
+    }
+
+    private function setRequiredsFactor(string $aptitude,string $aptitudeType,array $array){
         switch($aptitude){
-            case 'E':
+            case 'D':
+                if(count($array) == 6){
+                    break;
+                }
                 $array[] = $aptitudeType;
+            break;
+            case 'E':
+                for($e = 0 ; $e < 2 ; $e++){
+                    if(count($array) == 6){
+                        break;
+                    }
+                    $array[] = $aptitudeType;
+                }
             break;
             case 'F':
-                $array[] = $aptitudeType;
-                $array[] = $aptitudeType;
+                for($f = 0 ; $f < 3 ; $f++){
+                    if(count($array) == 6){
+                        break;
+                    }
+                    $array[] = $aptitudeType;
+                }
             break;
             case 'G':
-                $array[] = $aptitudeType;
-                $array[] = $aptitudeType;
-                $array[] = $aptitudeType;
+                for($g = 0 ; $g < 4 ; $g++){
+                    if(count($array) == 6){
+                        break;
+                    }
+                    $array[] = $aptitudeType;
+                }
             break;
             default:
             break;
         }
-        $this->selectUmamusume->$aptitudeDBName = 'D';
         return $array;
     }
 
-    private function setRacePriority(Umamusume $umamusume)
-    {
-        $aptitudeScores = [
-            'A' => 7, 'B' => 6, 'C' => 5,
-            'D' => 4, 'E' => 3, 'F' => 2, 'G' => 1
-        ];
-
-        $categories = [
-            '0_1' => $aptitudeScores[$umamusume->turf_aptitude] + $aptitudeScores[$umamusume->sprint_aptitude],
-            '0_2' => $aptitudeScores[$umamusume->turf_aptitude] + $aptitudeScores[$umamusume->mile_aptitude],
-            '0_3' => $aptitudeScores[$umamusume->turf_aptitude] + $aptitudeScores[$umamusume->classic_aptitude],
-            '0_4' => $aptitudeScores[$umamusume->turf_aptitude] + $aptitudeScores[$umamusume->long_distance_aptitude],
-            '1_1' => $aptitudeScores[$umamusume->dirt_aptitude] + $aptitudeScores[$umamusume->sprint_aptitude],
-            '1_2' => $aptitudeScores[$umamusume->dirt_aptitude] + $aptitudeScores[$umamusume->mile_aptitude],
-            '1_3' => $aptitudeScores[$umamusume->dirt_aptitude] + $aptitudeScores[$umamusume->classic_aptitude],
-        ];
-
-        arsort($categories);
-
-        $priority = array_keys($categories);
-        return $priority;
+    private function checkLarc($remainingAllRace){
+        if(clone $remainingAllRace->where("scenario_flag",1)->get()->count() == 0){
+            return false;
+        }
+        return true;
     }
 }

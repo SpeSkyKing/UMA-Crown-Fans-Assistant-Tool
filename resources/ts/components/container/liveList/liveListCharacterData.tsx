@@ -1,11 +1,10 @@
 import React from 'react';
 import {LiveListCharacterDataProps} from '../../interface/props';
+import {TdItem} from '../../common/tdItem';
 export const LiveListCharacterData : React.FC<LiveListCharacterDataProps> = ({umamusume}) => {
     return (
-        <tr>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+        <TdItem content=
             {umamusume.umamusume_name}
-            </td>
-        </tr>
+        />
     );
 };
