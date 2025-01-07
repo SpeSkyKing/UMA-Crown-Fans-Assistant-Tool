@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Race } from '../../interface/interface';
 import {RemainingRaceListItem} from './remainingRaceListItem';
 import {RemainingRaceListManualProps} from '../../interface/props';
+import { RemainingRaceListManualHeader } from './remainingRaceListManualHeader';
 export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = ({umamusume,onReturn}) => {
     const [selectedSeason, setSelectedSeason] = useState(1);
     const [selectedMonth, setSelectedMonth] = useState(7);
@@ -91,8 +92,9 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
         }
         if(isAutoMode){
             raceForward();
+        }else{
+            fetchRemainingRaces();
         }
-        fetchRemainingRaces();
     };
 
     const raceReturn = () =>{
@@ -139,7 +141,7 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
     return (
         <div className="min-h-screen flex flex-col items-center p-6">
             <div className="text-center text-2xl font-bold text-black my-6">
-                {selectUmamsume.umamusume_name}
+                {selectUmamsume?.umamusume_name}
             </div>
             <div className="flex space-x-4 mb-6">
             <select
@@ -176,14 +178,8 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
         
         <div className="relative h-[600px]">
             <table className="table-fixed w-full border-collapse border border-gray-300 mb-6">
-                <thead>
-                <tr className="bg-gray-200">
-                    <th className="px-4 py-2 text-center">レース名</th>
-                    <th className="px-4 py-2 text-center">馬場</th>
-                    <th className="px-4 py-2 text-center">距離</th>
-                    <th className="px-4 py-2 text-center">出走</th>
-                </tr>
-                </thead>
+                <RemainingRaceListManualHeader>
+                </RemainingRaceListManualHeader>
                 <tbody>
                 {races.map((race) => (
                     <RemainingRaceListItem
@@ -248,7 +244,7 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
         </div>
       
         {isAutoMode && (
-          <div className="text-gray-700 text-center mb-4">
+          <div className="text-gray-700 text-center mt-8">
             オートモードがオンの場合、出走後自動的に次の時期に進みます。
           </div>
         )}
