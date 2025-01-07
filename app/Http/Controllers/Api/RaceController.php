@@ -183,6 +183,10 @@ class RaceController extends Controller
 
         $umamusumeId = $request->json('umamusumeId');
 
+        if(is_null($umamusumeId)){
+            return response()->json(['error' => 'ウマ娘出走エラー'], 500);
+        }
+
         $this->selectUmamusume = Umamusume::where('umamusume_id',$umamusumeId)->first();
 
         $registUmamusumeRaceArray = RegistUmamusumeRace::where('user_id', $userId)
@@ -243,14 +247,16 @@ class RaceController extends Controller
             })->pluck('race_id');
         })->unique()->values();
 
-        if(!is_null($scenarioMatchingRaceIds)){
-            if($this->checkLarc(clone $remainingAllRace)){
-                $result['selectScenario'] = 'Larc';
-            }else{
-                $result['selectScenario'] = 'メイクラ';
-            }
-            return response()->json(['data' => $result]);
+        if($this->checkLarc($remainingAllRaceCollections)){
+            $result['selectScenario'] = 'Larc';
+        }else{
+            $result['selectScenario'] = 'メイクラ';
         }
+
+        if(count($scenarioMatchingRaceIds) == 0){
+            $result['selectScenario'] = 'なんでも';
+        }
+        return response()->json(['data' => $result]);
     }
 
     private function getRankedRaceCounts($remainingAllRace)
@@ -289,22 +295,14 @@ class RaceController extends Controller
 
     private function setRequiredsFactor(string $aptitude,string $aptitudeType,array $array){
         switch($aptitude){
-            case 'D':
+            case 'E':
                 if(count($array) == 6){
                     break;
                 }
                 $array[] = $aptitudeType;
             break;
-            case 'E':
-                for($e = 0 ; $e < 2 ; $e++){
-                    if(count($array) == 6){
-                        break;
-                    }
-                    $array[] = $aptitudeType;
-                }
-            break;
             case 'F':
-                for($f = 0 ; $f < 3 ; $f++){
+                for($facter = 0 ; $facter < 2 ; $facter++){
                     if(count($array) == 6){
                         break;
                     }
@@ -312,7 +310,7 @@ class RaceController extends Controller
                 }
             break;
             case 'G':
-                for($g = 0 ; $g < 4 ; $g++){
+                for($facter = 0 ; $facter < 3 ; $facter++){
                     if(count($array) == 6){
                         break;
                     }
@@ -326,7 +324,25 @@ class RaceController extends Controller
     }
 
     private function checkLarc($remainingAllRace){
-        if(clone $remainingAllRace->where("scenario_flag",1)->get()->count() == 0){
+        //凱旋門などがあれば
+        if($remainingAllRace->where("scenario_flag",1)->count() > 0){
+            return true;
+        }
+        //日本ダービー条件
+        if($remainingAllRace->whereNotIn("race_name","日本ダービー")->where("half_flag",1)->where("race_months",5)->count() > 0){
+            return false;
+        }
+        //夏合宿条件
+        if($remainingAllRace->whereNotIn("race_name",["ニエル賞","フォワ賞"])->whereIn("race_months",[7,8,9])->where("classic_flag",0)->count() > 0){
+            return false;
+        }
+        //凱旋門賞条件
+        if($remainingAllRace->whereNotIn("race_name","凱旋門賞")->where("race_months",10)->where("half_flag",0)->count() > 0){
+            return false;
+        }
+        //宝塚記念条件
+        if($remainingAllRace->whereNotIn("race_name","宝塚記念")->where("race_months",10)->where("half_flag",0)
+        ->where("senior_flag",1)->where("classic_flag",0)->where("junior_flag",0)->count() > 0){
             return false;
         }
         return true;
