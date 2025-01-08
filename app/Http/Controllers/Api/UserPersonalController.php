@@ -20,12 +20,12 @@ class UserPersonalController extends Controller
             $validated = $request->validate([
                 'userName' => ['required', 'string'],
                 'password' => ['required', 'string', 'min:7'],
-                'email' => ['required', 'string', 'email', 'max:255'],
-                'phone' => ['required', 'string', 'max:255'],
-                'birthday' => ['required', 'date'],
+                'email' => ['nullable','string', 'email', 'max:255'],
+                'phone' => ['nullable','string', 'max:255'],
+                'birthday' => ['nullable','date'],
                 'gender' => ['required', 'in:0,1,2'], 
-                'address' => ['required', 'string', 'max:255'],
-                'country' => ['required', 'string', 'max:255'],
+                'address' => ['nullable','string', 'max:255'],
+                'country' => ['nullable','string', 'max:255'],
                 'role' => ['required','in:0,1'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -35,8 +35,7 @@ class UserPersonalController extends Controller
 
         $userImage = null;
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
-            $userImage = $request->file('avatar')->store('public/image/userImage');
-            $userImage = str_replace('public/', '', $userImage);
+            $userImage = $request->file('avatar')->storeAs('image/userImage', $request->file('avatar')->hashName(), 'public');
         }
 
         try {
@@ -46,7 +45,7 @@ class UserPersonalController extends Controller
             $user->password = Hash::make($validated['password']);
             $user->email = $validated['email'];
             $user->phone_number = $validated['phone'];
-            $user->user_image = $userImage;
+            $user->user_image = basename($userImage);
             $user->birthday = $validated['birthday'];
             $user->gender = $validated['gender'];
             $user->location = $validated['address'];

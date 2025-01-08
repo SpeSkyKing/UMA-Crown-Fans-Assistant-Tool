@@ -7,7 +7,7 @@ import {User} from './interface/interface';
 export const Home = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [selectedContent, setSelectedContent] = useState("characterRegist");
-    const [userName, setUserName] = useState('');
+    const [user, setUser] = useState<User>();
     const token = localStorage.getItem("auth_token");
 
     useEffect(() => {
@@ -17,7 +17,7 @@ export const Home = () => {
     }, []);
 
     useEffect(() => {
-        getUserName();
+        getUserdata();
     }, []);
 
     const handleSelect = ( content:string ) => {
@@ -49,7 +49,7 @@ export const Home = () => {
         }
       };
 
-      const getUserName = async () => {
+      const getUserdata = async () => {
         if (!token) {
             console.error('トークンが見つかりません');
             return;
@@ -67,7 +67,7 @@ export const Home = () => {
             }
             const responseJson = await response.json();
             const data: User = responseJson.data;
-            setUserName(data.user_name);
+            setUser(data);
         } catch (error) {
             console.error('Error fetching user data:', error);
         }
@@ -104,11 +104,12 @@ export const Home = () => {
             {isAuthenticated && (
                 <div className=" text-white flex flex-col items-center justify-center w-full space-y-4">
                     <div
-                        className={`block w-full text-center text-2xl font-bold py-4 rounded-xl border-2 border-gray-300 
+                        className='block w-full text-center text-2xl font-bold py-4 rounded-xl border-2 border-gray-300 
                         bg-transparent text-purple-500 transition-all duration-300 hover:bg-pink-200 bg-[30%_30%]
-                        hover:text-white hover:scale-105 hover:shadow-lg active:bg-pink-300 mb-4 bg-userName bg-cover`}>
+                        hover:text-white hover:scale-105 hover:shadow-lg active:bg-pink-300 mb-4'
+                        style={{ backgroundImage: `url(/storage/image/userImage/${user?.user_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                         <div className="font-bold text-pink text-2xl w-full text-center">
-                            {userName}
+                            {user?.user_name}
                         </div>
                     </div>
                     <button
