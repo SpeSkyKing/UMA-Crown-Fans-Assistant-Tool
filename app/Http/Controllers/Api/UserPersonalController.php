@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Jenssegers\Agent\Agent;
-use Stevebauman\Location\Facades\Location;
 use Carbon\Carbon;
 
 class UserPersonalController extends Controller
@@ -19,9 +18,9 @@ class UserPersonalController extends Controller
     {
         try {
             $validated = $request->validate([
-                'userName' => ['required', 'string', 'unique:user_table'],
+                'userName' => ['required', 'string'],
                 'password' => ['required', 'string', 'min:7'],
-                'email' => ['required', 'string', 'email', 'max:255', 'unique:user_table'],
+                'email' => ['required', 'string', 'email', 'max:255'],
                 'phone' => ['required', 'string', 'max:255'],
                 'birthday' => ['required', 'date'],
                 'gender' => ['required', 'in:0,1,2'], 
@@ -82,7 +81,6 @@ class UserPersonalController extends Controller
             try{
                 $agent = new Agent();
                 $loginIp = request()->ip();
-                $position = Location::get($loginIp);
                 $userHistory = new UserHistory();
                 $userHistory->user_id = $user->user_id;
                 $userHistory->login_date = Carbon::now()->toDateString();
@@ -92,10 +90,10 @@ class UserPersonalController extends Controller
                 $userHistory->login_browser = $agent->browser();
                 $userHistory->login_device = $agent->isDesktop() ? 'Desktop' : ($agent->isTablet() ? 'Tablet' : ($agent->isMobile() ? 'Mobile' : 'Unknown'));
                 $userHistory->login_rendering_engine = $agent->getUserAgent(); 
-                $userHistory->login_location  = $position ? $position->city . ', ' . $position->countryName : 'Unknown';
+                
                 $userHistory->save();
             } catch (\Exception $e) {
-                Log::error('ユーザー履歴登録エラー:', $e->getMessage());
+                Log::error('ユーザー履歴登録エラー:',['error_message' => $e->getMessage()] );
                 return response()->json(['error' => 'ユーザー履歴登録エラー'], 500);
             }
 

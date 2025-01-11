@@ -129,8 +129,8 @@ export const CharacterRegist = () => {
   return (
       <div>
         <div className="flex gap-4 mb-6 sticky top-0 bg-white/50 z-10 p-4">
-          <div className="w-1/2 h-96 flex-none rounded-full overflow-hidden shadow-lg">
-          {/* 画像配置 */}
+          <div className="w-1/2 h-96 flex-none rounded-full overflow-hidden shadow-lg"
+          style={{ backgroundImage: `url(/storage/image/umamusumeData/${selectedUmamusume?.umamusume_name}.png)`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
           </div>
   
           <div className="w-1/2 h-96 flex-grow flex flex-col justify-center">
@@ -205,7 +205,7 @@ export const CharacterRegist = () => {
           <input
             id="fans"
             type="number"
-            className="p-2 border rounded-lg shadow-md mr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="p-2 border rounded-lg shadow-md mr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-right"  // text-rightで数字を右寄せ
             value={fans}
             onChange={handleFansChange}
             placeholder="ファン数"

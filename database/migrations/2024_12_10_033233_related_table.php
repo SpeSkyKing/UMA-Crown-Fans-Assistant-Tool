@@ -76,7 +76,6 @@ return new class extends Migration
             $table->string('login_browser');
             $table->string('login_device');
             $table->string('login_rendering_engine');
-            $table->string('login_location');
             $table->foreign('user_id')->references('user_id')->on('user_table')->onDelete('cascade');
             $table->primary(['user_id','login_date','login_time']);
         });

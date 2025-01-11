@@ -1,5 +1,6 @@
 import React from 'react';
 import {RaceListdataProps} from '../../interface/props';
+import {TdItem} from '../../common/tdItem';
 export const RaceListdata : React.FC<RaceListdataProps> = ({race}) => {
     let raceDistance = "";
     switch (Number(race.distance)) {
@@ -53,28 +54,28 @@ export const RaceListdata : React.FC<RaceListdataProps> = ({race}) => {
 
     return (
         <tr>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            <TdItem content=
             {race.race_name}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            />
+            <TdItem content=
             {raceRank}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            />
+            <TdItem content=
             {race.race_state ? "ダート" : "芝"}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            />
+            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold" style={{ fontSize: 'clamp(1rem, 1.5vw, 0.25rem)' , whiteSpace: 'nowrap'}}>
             {raceDistance}/{race.distance_detail}m
             </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {race.num_fans}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {Math.ceil(race.num_fans * 1.09)}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            <TdItem content=
+            {race.num_fans.toString()}
+            />
+            <TdItem content=
+            {Math.ceil(race.num_fans * 1.09).toString()}
+            />
+            <TdItem content=
             {toRun}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            />
+            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold" style={{ fontSize: 'clamp(1rem, 1.5vw, 0.25rem)' , whiteSpace: 'nowrap'}}>
             {race.race_months}月{race.half_flag ? "後半" : "前半"}
             </td>
         </tr>

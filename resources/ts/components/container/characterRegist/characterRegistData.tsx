@@ -1,4 +1,5 @@
 import {CharacterRegistDataProps} from '../../interface/props';
+import {TdItem} from '../../common/tdItem';
 export const CharacterRegistData : React.FC<CharacterRegistDataProps> = ({race,checked,onCheckboxChange}) => {
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,22 +60,22 @@ export const CharacterRegistData : React.FC<CharacterRegistDataProps> = ({race,c
             onChange={handleChange}
             />
             </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            <TdItem content=
             {race.race_name}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            />
+            <TdItem content=
             {raceRank}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            />
+            <TdItem content=
             {race.race_state ? "ダート" : "芝"}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            />
+            <td className="border border-gray-500 px-4 py-2 text-center">
             {raceDistance}/{race.distance_detail}m
             </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            <TdItem content=
             {toRun}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
+            />
+            <td className="border border-gray-500 px-4 py-2 text-center">
             {race.race_months}月{race.half_flag ? "後半" : "前半"}
             </td>
         </tr>

@@ -1,5 +1,6 @@
 import React from 'react';
 import {ActerListDataProps} from '../interface/prpps';
+import {TdItem} from '../../common/tdItem';
 export const ActerListData : React.FC<ActerListDataProps> = ({acter}) => {
 
     function calculateAge(birthDate: Date): string {
@@ -24,18 +25,10 @@ export const ActerListData : React.FC<ActerListDataProps> = ({acter}) => {
     
     return (
         <tr>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {acter.umamusume.umamusume_name}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {acter.acter_name}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {acter.nickname}
-            </td>
-            <td className="border border-gray-500 px-4 py-2 text-center text-black font-semibold">
-            {acterAge}
-            </td>
+            <TdItem content={acter.umamusume.umamusume_name}></TdItem>
+            <TdItem content={acter.acter_name}></TdItem>
+            <TdItem content={acter.nickname}></TdItem>
+            <TdItem content={acterAge}></TdItem>
         </tr>
     );
 };

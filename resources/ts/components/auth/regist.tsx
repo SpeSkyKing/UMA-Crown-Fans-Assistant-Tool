@@ -2,7 +2,7 @@ import { useState } from "react";
 import {InputField} from '../common/inputField';
 import {RegistProps} from '../interface/props';
 export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
-    const [Username, setUserName] = useState("");
+    const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -18,14 +18,14 @@ export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
     } 
 
     const handleRegist = async ()  => {
-        if (Username && password) {
+        if (userName && password) {
         try {
             const response = await fetch("/api/user/regist", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ Username, password ,email , phone ,avatar ,birthday ,gender ,address ,country ,role}),
+                body: JSON.stringify({ userName, password ,email , phone ,avatar ,birthday ,gender ,address ,country ,role}),
             });
 
             if (!response.ok) {
@@ -34,7 +34,7 @@ export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
 
 
             const data = await response.json();
-            onRegist(Username, password);
+            onRegist(userName, password);
             alert("登録が完了しました！");
         } catch (error) {
 
@@ -51,10 +51,10 @@ export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
             <h2 className="text-2xl font-bold text-center mb-6 text-white">新規登録</h2>
             <div className="p-4">
             <InputField
-                id="Username"
+                id="userName"
                 label="ユーザー名"
                 type="text"
-                value={Username}
+                value={userName}
                 placeholder="ユーザー名を入力してください"
                 onChange={(e) => setUserName(e.target.value)}/>
             <InputField

@@ -23,9 +23,11 @@ export const Aptitude : React.FC<AptitudeProps> = ({name,aptitude})=> {
       };
 
 return (
-  <div className="flex flex-col items-center p-4 bg-gradient-to-b from-green-400 to-green-100 shadow-lg rounded-lg transition transform hover:scale-105 w-24 h-24">
-    <div className="font-poppins text-xl font-semibold">{name}</div>
-    <div className={`text-2xl ${getAptitudeColor(aptitude)} font-semibold`}>{aptitude}</div>
+  <div className="flex flex-col items-center p-4 bg-gradient-to-b from-green-400 to-green-100 shadow-lg rounded-lg transition transform hover:scale-105 w-1/6 h-full md-h-5/6 max-w-xs max-h-xs">
+    <div className="font-poppins text-xs font-semibold whitespace-nowrap">{name}</div>
+    <div className={`text-base sm:text-lg md:text-2xl ${getAptitudeColor(aptitude)} font-semibold`}>
+      {aptitude}
+    </div>
   </div>
   );
 };
