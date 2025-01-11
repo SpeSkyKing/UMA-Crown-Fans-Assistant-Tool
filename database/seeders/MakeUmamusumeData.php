@@ -124,36 +124,46 @@ class MakeUmamusumeData extends Seeder
     private function setScenarioRace(array $object,string $index,int $count){
         $scenarioRaceCount = 1;
         $randomGroupId = 1;
-            foreach($object as $objectScenarioRace){
-                if(is_array($objectScenarioRace)){
-                    foreach($objectScenarioRace as $scenarioRaceRandom){
-                        $randomRace  = new ScenarioRace();
-                        $raceId = Race::where('race_name',$scenarioRaceRandom)->first()->race_id;
-                        if(!is_null($raceId) && !ScenarioRace::where('race_id',$raceId)->where('umamusume_id',$count)->exists()){
-                            $randomRace->umamusume_id = $count;
-                            $randomRace->race_id =  $raceId;
-                            $randomRace->race_number = $scenarioRaceCount;
-                            $randomRace->random_group = $randomGroupId;
-                            $randomRace->save();
-                            echo $index.'にシナリオレースの'.$scenarioRaceRandom.'を登録しました。'.PHP_EOL;
-                        }
-                        $scenarioRaceCount++;
-                    }
-                    $randomGroupId++;
-                }else{
-                    $scenarioRace  = new ScenarioRace();
-                    $raceId = Race::where('race_name',$objectScenarioRace)->first()->race_id;
-                        if(!is_null($raceId) && !ScenarioRace::where('race_id',$raceId)->where('umamusume_id',$count)->exists()){
-                        $scenarioRace->umamusume_id = $count;
-                        $scenarioRace->race_id = $raceId;
-                        $scenarioRace->race_number = $scenarioRaceCount;
-                        $scenarioRace->save();
-                        echo $index.'にシナリオレースの'.$objectScenarioRace.'を登録しました。'.PHP_EOL;
-                    }
-                    $scenarioRaceCount++;
+        foreach($object as $objectScenarioRace){
+            if(is_array($objectScenarioRace) && !isset($objectScenarioRace['時期'])){
+                foreach($objectScenarioRace as $scenarioRaceRandom){
+                    $scenarioRaceCount = $this->setRace($scenarioRaceRandom,$count,$scenarioRaceCount,$index,$randomGroupId); 
                 }
+                $randomGroupId++;
+            }else{
+                $scenarioRaceCount = $this->setRace($objectScenarioRace,$count,$scenarioRaceCount,$index);
             }
-}
+        }
+    }
+
+    private function setRace($race, int $count ,int $raceCount,string $index ,?int $randomGroupId = null ){
+        if(is_array($race)){
+            $randomRace  = new ScenarioRace();
+            $raceId = Race::where('race_name',$race['名前'])->first()->race_id;
+            if(!is_null($raceId) && !ScenarioRace::where('race_id',$raceId)->where('umamusume_id',$count)->exists()){
+                $randomRace->umamusume_id = $count;
+                $randomRace->race_id =  $raceId;
+                $randomRace->race_number = $raceCount;
+                $randomRace->random_group = $randomGroupId;
+                $randomRace->senior_flag = $race['時期'] == 'シニア' ? true : false;
+                $randomRace->save();
+                echo $index.'にシナリオレースの'.$race['名前'].'を登録しました。'.PHP_EOL;
+            }
+        }else{
+            $randomRace  = new ScenarioRace();
+            $raceId = Race::where('race_name',$race)->first()->race_id;
+            if(!is_null($raceId) && !ScenarioRace::where('race_id',$raceId)->where('umamusume_id',$count)->exists()){
+                $randomRace->umamusume_id = $count;
+                $randomRace->race_id =  $raceId;
+                $randomRace->race_number = $raceCount;
+                $randomRace->random_group = $randomGroupId;
+                $randomRace->save();
+                echo $index.'にシナリオレースの'.$race.'を登録しました。'.PHP_EOL;
+            }
+        }
+        $raceCount++;
+        return $raceCount;
+    }
 
     private function setActerTable(array $object,string $umamusumeName,int $count){
         if(!UmamusumeActer::where('acter_name',$object['名前'])->exists()){
@@ -193,6 +203,7 @@ class MakeUmamusumeData extends Seeder
                 $live_->composer = $live['作曲'];
                 $live_->arranger =  $live['編曲'];
                 $live_->save();
+                echo $live['曲名'].'を登録しました。'.PHP_EOL;
             }
             if($live['歌唱ウマ娘'][1] == 'all'){
                 $umamusumeArray = Umamusume::select('umamusume_id')->get();
@@ -204,6 +215,7 @@ class MakeUmamusumeData extends Seeder
                         $vocalUmamusume->save();
                     }
                 }
+                echo $live['曲名'].'に全員を登録しました。'.PHP_EOL;
             }else{
                 foreach($live['歌唱ウマ娘'] as $liveUmamusume){
                     $umamusmeData = Umamusume::where('umamusume_name',$liveUmamusume)->first();
@@ -212,6 +224,7 @@ class MakeUmamusumeData extends Seeder
                         $vocalUmamusume->live_id = $liveCount;
                         $vocalUmamusume->umamusume_id = $umamusmeData->umamusume_id;
                         $vocalUmamusume->save();
+                        echo $live['曲名'].'に'.$liveUmamusume.'を登録しました。'.PHP_EOL;
                     }
                 }
             }
