@@ -6,7 +6,7 @@ export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
-    const [avatar, setAvatar] = useState("");
+    const [avatar, setAvatar] = useState<File | null>(null);
     const [birthday, setBirthday] = useState("");
     const [gender, setGender] = useState("2");
     const [address, setAddress] = useState("");
@@ -19,20 +19,28 @@ export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
 
     const handleRegist = async ()  => {
         if (userName && password) {
+            const formData = new FormData();
+            if (avatar) {
+                formData.append("avatar", avatar);
+            }
+            formData.append("userName", userName);
+            formData.append("password", password);
+            formData.append("email", email);
+            formData.append("phone", phone);
+            formData.append("birthday", birthday);
+            formData.append("gender", gender);
+            formData.append("address", address);
+            formData.append("country", country);
+            formData.append("role", role);
         try {
             const response = await fetch("/api/user/regist", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ userName, password ,email , phone ,avatar ,birthday ,gender ,address ,country ,role}),
+                body: formData,
             });
 
             if (!response.ok) {
                 throw new Error("ユーザーの登録に失敗しました");
             }
-
-
             const data = await response.json();
             onRegist(userName, password);
             alert("登録が完了しました！");
@@ -71,14 +79,19 @@ export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
                 value={phone}
                 placeholder="電話番号を入力してください"
                 onChange={(e) => setPhone(e.target.value)}/>
-            <InputField
-                id="avatar"
-                label="アバター画像"
-                type="file"
-                value={avatar ? avatar : ''}
-                placeholder="画像を選択してください"
-                onChange={(e) => setAvatar(e.target.files ? e.target.files[0] : null)}
-                accept="image/*"/>
+            <div className="mb-4">
+                <label htmlFor="avatar" className="block text-sm font-medium text-white">
+                    アバター画像
+                </label>
+                <input
+                    id="avatar"
+                    type="file"
+                    className="w-full px-4 py-2 mt-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none"
+                    placeholder="画像を選択してください"
+                    onChange={(e) => setAvatar(e.target.files ? e.target.files[0] : null)}
+                    accept="image/*"
+                />
+            </div>
             <InputField
                 id="birthday"
                 label="誕生日"

@@ -57,13 +57,13 @@ return new class extends Migration
             $table->integer('user_id');   
             $table->string('password');
             $table->string('user_name');
-            $table->string('email');
-            $table->string('phone_number');
+            $table->string('email')->nullable();
+            $table->string('phone_number')->nullable();
             $table->string('user_image')->nullable();
-            $table->date('birthday');
+            $table->date('birthday')->nullable();
             $table->enum('gender',['0','1','2']);
-            $table->string('location');
-            $table->string('country');
+            $table->string('location')->nullable();
+            $table->string('country')->nullable();
             $table->boolean('state');
             $table->boolean('role');
             $table->string('api_token', 80)->nullable()->unique();

@@ -16,7 +16,6 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             backgroundImage: {
-                'userName':         "url('/public/storage/image/SidebarTab/StillinLove.png')",
                 'Logout':           "url('/public/storage/image/SidebarTab/SilenceSuzuka.PNG')",
             },
         },
