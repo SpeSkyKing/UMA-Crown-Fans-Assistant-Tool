@@ -179,6 +179,7 @@ class RaceController extends Controller
 
     public function remainingPattern(Request $request){
         
+        //一連の処理
         $userId = Auth::user()->user_id;
 
         $umamusumeId = $request->json('umamusumeId');
@@ -192,83 +193,104 @@ class RaceController extends Controller
         $registUmamusumeRaceArray = RegistUmamusumeRace::where('user_id', $userId)
         ->where('umamusume_id',$umamusumeId)->pluck('race_id')->toArray();
 
-        $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3]);
+        $remainingAllRaceCollections = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3])->get();
 
-        $remainingAllRaceCollections = (clone $remainingAllRace)->get();
-        $rankRace = $this->getRankedRaceCounts(clone $remainingAllRace);
+        //一連の処理
 
-        $requiredsFactor = array();
+        //まずシナリオレースの時期と重複するレースの存在の検証
+        //TRUEであれば固有シナリオが存在するレースでは難しい………A
+        $IsExistScenarioFlag = $this->checkDuplicateScenarioRace($umamusumeId ,$remainingAllRaceCollections);
 
-        for($i = 0 ; $i < 7 ; $i++){
-            if($rankRace[$i]['race_type'] == '芝'){
-                $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->turf_aptitude,$rankRace[$i]['race_type'],$requiredsFactor);
-            }else{
-                $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->dirt_aptitude,$rankRace[$i]['race_type'],$requiredsFactor);
-            }
-            if(count($requiredsFactor) == 6){
-                break;
-            }
-    
-            switch($rankRace[$i]['distance']){
-                case '短距離':
-                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->sprint_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
-                break;
-                case 'マイル':
-                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->mile_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
-                break;
-                case '中距離':
-                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->classic_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
-                break;
-                case '長距離':
-                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->long_distance_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
-                break;
-            }
-            if(count($requiredsFactor) == 6){
-                break;
-            }
-        }
+        //次にラークシナリオのレースの時期と重複するレースの存在の検証
+        //TRUEであればラークシナリオである必要がない………B
+        $IsExistLarcFlag = $this->checkLarcScenario($remainingAllRaceCollections);
 
-        $result= array();
+        $result = array();
 
-        $result['requiredsFactor'] = $requiredsFactor;
-
-        $scenarioRaceArray = ScenarioRace::where('umamusume_id', $umamusumeId)->pluck('race_id')->toArray();
-
-        $scenarioRaceTimes = Race::whereIn('race_id', $scenarioRaceArray)
-        ->select('race_id', 'senior_flag', 'classic_flag', 'junior_flag', 'race_months', 'half_flag')
-        ->distinct()
-        ->get();
-
-        $scenarioMatchingRaceIds = $scenarioRaceTimes->flatMap(function ($time) use ($remainingAllRaceCollections) {
-            return $remainingAllRaceCollections->filter(function ($race) use ($time) {
-                return $race->race_months == $time->race_months && $race->half_flag == $time->half_flag
-                && $race->classic_flag == $time->classic_flag  && ($race->junior_flag == $time->junior_flag
-                || $race->senior_flag == $time->senior_flag);
-            })->pluck('race_id');
-        })->unique()->values();
-
-        if($this->checkLarc($remainingAllRaceCollections)){
-            $result['selectScenario'] = 'Larc';
-        }else{
+        //AがTRUEならメイクラ
+        //FALSEでBがTRUEならLarc
+        //FALSEならなんでもいい
+        if($IsExistScenarioFlag){
             $result['selectScenario'] = 'メイクラ';
+        }else{
+            if($IsExistLarcFlag){
+                $result['selectScenario'] = 'なんでも';
+            }else{
+                $result['selectScenario'] = 'Larc';
+            }
         }
 
-        if(count($scenarioMatchingRaceIds) == 0){
-            $result['selectScenario'] = 'なんでも';
-        }
+        $result['requiredsFactor'] = $this->getRequiredsFactor($remainingAllRaceCollections);
+
         return response()->json(['data' => $result]);
     }
 
-    private function getRankedRaceCounts($remainingAllRace)
+    private function checkDuplicateScenarioRace(int $umamusumeId ,object $remainingAllRaceCollections){
+        $result = false;
+        $scenarioRaceArray = ScenarioRace::where('umamusume_id', $umamusumeId)->get();
+        foreach($scenarioRaceArray as $scenarioRaceItem){
+            $checkRace = Race::where('race_id',$scenarioRaceItem['race_id'])->first();
+            $seniorFlag = $classicFlag = $juniorFlag = null;
+            if(is_null($scenarioRaceItem['senior_flag'])){
+                $seniorFlag  = $checkRace->senior_flag  ? $checkRace->senior_flag  : 'all';
+                $classicFlag = $checkRace->classic_flag ? $checkRace->classic_flag : 'all';
+                $juniorFlag  = $checkRace->junior_flag  ? $checkRace->junior_flag  : 'all';
+            }else{
+                if($scenarioRaceItem['senior_flag']){
+                    $seniorFlag  = $checkRace->senior_flag  ? $checkRace->senior_flag  : 'all';
+                    $classicFlag = 'all';
+                    $juniorFlag  = $checkRace->junior_flag  ? $checkRace->junior_flag  : 'all';
+                }else{
+                    $seniorFlag  = 'all';
+                    $classicFlag = $checkRace->classic_flag ? $checkRace->classic_flag : 'all';
+                    $juniorFlag  = $checkRace->junior_flag  ? $checkRace->junior_flag  : 'all';
+                }
+            }
+
+            $conditions = [];
+            
+            if ($classicFlag !== 'all') {
+                $conditions['classic_flag'] = $classicFlag;
+            }
+            if ($seniorFlag !== 'all') {
+                $conditions['senior_flag'] = $seniorFlag;
+            }
+            if ($juniorFlag !== 'all') {
+                $conditions['junior_flag'] = $juniorFlag;
+            }
+
+            $conditions['race_months'] = $checkRace['race_months'];
+            $conditions['half_flag'] = $checkRace['half_flag'];
+            $conditions['race_name'] = $checkRace['race_name'];
+
+            $result = $remainingAllRaceCollections->contains(function ($item) use ($conditions,$checkRace) {
+                foreach ($conditions as $key => $value) {
+                    if ($item['race_name'] === $checkRace['race_name']) {
+                        return false;
+                    }
+                    if ($item[$key] !== $value) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            if($result){
+                return $result;
+            }
+        }
+        return $result;
+    }
+
+    private function getRankedRaceCounts(object $remainingAllRaceCollections)
     {
         $raceCounts = [
-            '芝_短距離'        => (clone $remainingAllRace)->where('race_state', 0)->where('distance', 1)->count(),
-            '芝_マイル'        => (clone $remainingAllRace)->where('race_state', 0)->where('distance', 2)->count(),
-            '芝_中距離'        => (clone $remainingAllRace)->where('race_state', 0)->where('distance', 3)->count(),
-            '芝_長距離'        => (clone $remainingAllRace)->where('race_state', 0)->where('distance', 4)->count(),
-            'ダート_短距離'    => (clone $remainingAllRace)->where('race_state', 1)->where('distance', 1)->count(),
-            'ダート_マイル'    => (clone $remainingAllRace)->where('race_state', 1)->where('distance', 2)->count(),
-            'ダート_中距離'    => (clone $remainingAllRace)->where('race_state', 1)->where('distance', 3)->count(),
+            '芝_短距離'        => ($remainingAllRaceCollections)->where('race_state', 0)->where('distance', 1)->count(),
+            '芝_マイル'        => ($remainingAllRaceCollections)->where('race_state', 0)->where('distance', 2)->count(),
+            '芝_中距離'        => ($remainingAllRaceCollections)->where('race_state', 0)->where('distance', 3)->count(),
+            '芝_長距離'        => ($remainingAllRaceCollections)->where('race_state', 0)->where('distance', 4)->count(),
+            'ダート_短距離'     => ($remainingAllRaceCollections)->where('race_state', 1)->where('distance', 1)->count(),
+            'ダート_マイル'     => ($remainingAllRaceCollections)->where('race_state', 1)->where('distance', 2)->count(),
+            'ダート_中距離'     => ($remainingAllRaceCollections)->where('race_state', 1)->where('distance', 3)->count(),
         ];
 
         arsort($raceCounts);
@@ -323,28 +345,64 @@ class RaceController extends Controller
         return $array;
     }
 
-    private function checkLarc($remainingAllRace){
-        //凱旋門などがあれば
-        if($remainingAllRace->where("scenario_flag",1)->count() > 0){
-            return true;
+    private function checkLarcScenario(object $remainingAllRaceCollections){
+        if($remainingAllRaceCollections->where("scenario_flag",1)->count() == 0){
+            //以下条件に当てはまれば
+            //日本ダービー条件
+            if($remainingAllRaceCollections->whereNotIn("race_name","日本ダービー")->where("half_flag",1)->where("race_months",5)->count() > 0){
+                return true;
+            }
+            //夏合宿条件
+            if($remainingAllRaceCollections->whereNotIn("race_name",["ニエル賞","フォワ賞"])->whereIn("race_months",[7,8,9])->where("classic_flag",0)->count() > 0){
+                return true;
+            }
+            //凱旋門賞条件
+            if($remainingAllRaceCollections->whereNotIn("race_name","凱旋門賞")->where("race_months",10)->where("half_flag",0)->count() > 0){
+                return true;
+            }
+            //宝塚記念条件
+            if($remainingAllRaceCollections->whereNotIn("race_name","宝塚記念")->where("race_months",10)->where("half_flag",0)
+            ->where("senior_flag",1)->where("classic_flag",0)->where("junior_flag",0)->count() > 0){
+                return true;
+            }
         }
-        //日本ダービー条件
-        if($remainingAllRace->whereNotIn("race_name","日本ダービー")->where("half_flag",1)->where("race_months",5)->count() > 0){
-            return false;
+        return false;
+    }
+
+    private function getRequiredsFactor(object $remainingAllRaceCollections){
+        $rankRace = $this->getRankedRaceCounts($remainingAllRaceCollections);
+
+        $requiredsFactor = array();
+
+        for($i = 0 ; $i < 7 ; $i++){
+            if($rankRace[$i]['race_type'] == '芝'){
+                $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->turf_aptitude,$rankRace[$i]['race_type'],$requiredsFactor);
+            }else{
+                $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->dirt_aptitude,$rankRace[$i]['race_type'],$requiredsFactor);
+            }
+            if(count($requiredsFactor) == 6){
+                break;
+            }
+    
+            switch($rankRace[$i]['distance']){
+                case '短距離':
+                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->sprint_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                break;
+                case 'マイル':
+                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->mile_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                break;
+                case '中距離':
+                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->classic_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                break;
+                case '長距離':
+                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->long_distance_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                break;
+            }
+            if(count($requiredsFactor) == 6){
+                break;
+            }
         }
-        //夏合宿条件
-        if($remainingAllRace->whereNotIn("race_name",["ニエル賞","フォワ賞"])->whereIn("race_months",[7,8,9])->where("classic_flag",0)->count() > 0){
-            return false;
-        }
-        //凱旋門賞条件
-        if($remainingAllRace->whereNotIn("race_name","凱旋門賞")->where("race_months",10)->where("half_flag",0)->count() > 0){
-            return false;
-        }
-        //宝塚記念条件
-        if($remainingAllRace->whereNotIn("race_name","宝塚記念")->where("race_months",10)->where("half_flag",0)
-        ->where("senior_flag",1)->where("classic_flag",0)->where("junior_flag",0)->count() > 0){
-            return false;
-        }
-        return true;
+        sort($requiredsFactor); 
+        return $requiredsFactor;
     }
 }
