@@ -16,16 +16,6 @@ export const RemainingRaceList = () => {
         fetchRaces();
     },[]);
 
-    useEffect(() => {
-      if (selectUmamusume != undefined) {
-        setIsCheckRace(true);
-      }
-    },[selectUmamusume]);
-
-    useEffect(() => {
-      setRaceEntryPattern(raceEntryPattern);
-    },[raceEntryPattern]);
-
     const fetchRaces = async () => {
       try {
         const response = await fetch("/api/race/remaining",{
@@ -44,50 +34,50 @@ export const RemainingRaceList = () => {
       }
     }
 
-    const fetchEntryPattern = async () => {
-              try {
-                if (!token) {
-                    console.error('トークンが見つかりません');
-                    return;
-                }
-                const response = await fetch("/api/race/remainingPattern",{
-                  method: "POST",
-                  headers: {
-                    "Authorization": `Bearer ${token}`,
-                  },
-                  body: JSON.stringify({umamusumeId:selectUmamusume?.umamusume_id}),
-                });
-                const responseJson = await response.json();
-                const data = responseJson.data;
-                setRaceEntryPattern(data);
-                console.log(data);
-              } catch (error) {
-                console.error("Failed to fetch races:", error);
-              }
-        };
+    const fetchEntryPattern = async (umamusume : Umamusume) => {
+          try {
+            if (!token) {
+                console.error('トークンが見つかりません');
+                return;
+            }
+            const response = await fetch("/api/race/remainingPattern",{
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${token}`,
+              },
+              body: JSON.stringify({umamusumeId:umamusume?.umamusume_id}),
+            });
+            const responseJson = await response.json();
+            const data = responseJson.data;
+            setRaceEntryPattern(data);
+          } catch (error) {
+            console.error("Failed to fetch races:", error);
+          }
+    };
 
     const openCheckRaces = (umamusume : Umamusume) => {
-      fetchEntryPattern();  
       setSelectUmamusume(umamusume);
+      fetchEntryPattern(umamusume);
+      setIsCheckRace(true);
     };
 
     const returnCheckRaces = () => {
+      fetchRaces();
       setIsCheckRace(false);
       setIsManualRaces(false);
-      fetchRaces();
+
     }
 
     const onManualRaces = () =>{
       setIsManualRaces(true);
     }
+
+    if (loading) {
+      return <div className="min-h-full flex justify-center bg-cover"></div>
+    }
     
     if (isManualRaces) {
       return <RemainingRaceListManual umamusume={selectUmamusume} onReturn={returnCheckRaces}></RemainingRaceListManual>
-    }
-
-
-    if (loading) {
-        return <div className="min-h-full flex justify-center bg-Looding bg-cover"></div>
     }
 
     if (isCheckRace){
