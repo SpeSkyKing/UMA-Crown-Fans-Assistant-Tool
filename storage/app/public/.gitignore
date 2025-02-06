@@ -1,6 +1,5 @@
 image/userImage/*
 
-!image/
 !image/*
 
 !.gitignore
