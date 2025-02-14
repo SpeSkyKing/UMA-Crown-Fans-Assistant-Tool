@@ -9,6 +9,7 @@ export const Home = () => {
     const [selectedContent, setSelectedContent] = useState("characterRegist");
     const [user, setUser] = useState<User>();
     const token = localStorage.getItem("auth_token");
+    const image = user?.user_image ? user?.user_image : "StillinLove.png";
 
     useEffect(() => {
         if (token) {
@@ -107,7 +108,7 @@ export const Home = () => {
                         className='block w-full text-center text-2xl font-bold py-4 rounded-xl border-2 border-gray-300 
                         bg-transparent text-purple-500 transition-all duration-300 hover:bg-pink-200 bg-[30%_30%]
                         hover:text-white hover:scale-105 hover:shadow-lg active:bg-pink-300 mb-4'
-                        style={{ backgroundImage: `url(/storage/image/userImage/${user?.user_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                        style={{ backgroundImage: `url(/storage/image/userImage/${image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                         <div className="font-bold text-pink text-2xl w-full text-center">
                             {user?.user_name}
                         </div>
