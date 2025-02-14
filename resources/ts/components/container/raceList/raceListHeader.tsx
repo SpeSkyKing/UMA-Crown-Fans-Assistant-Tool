@@ -1,5 +1,6 @@
 import { Header } from "../../common/header";
 
+//ヘッダーに表示する情報を定義する
 const raceListHeaderItem = [
     {display:'レース名'},
     {display:'クラス'},

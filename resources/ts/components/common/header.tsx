@@ -1,5 +1,7 @@
 import React from "react";
-import {HeaderProps} from '../interface/props';
+import { HeaderProps } from '../interface/props';
+
+//テーブルのヘッダーを構成するコンポーネント
 export const Header: React.FC<HeaderProps> = ({ ItemArray }) => {
     return (
         <thead className="sticky top-0 bg-white z-10">

@@ -1,7 +1,7 @@
-import React,{useState,useEffect} from 'react';
+import {useState,useEffect} from 'react';
 import {Race} from '../../interface/interface';
 import {RaceListHeader} from './raceListHeader';
-import {RaceListdata} from './raceListdata';
+import {RaceListData} from './raceListdata';
 export const RaceList = () => {
 
     const [races, setRaces] = useState<Race[]>([]);
@@ -31,7 +31,7 @@ export const RaceList = () => {
         <RaceListHeader></RaceListHeader>
         <tbody>
         {races.map((race) => (
-          <RaceListdata race={race} />
+          <RaceListData race={race} />
         ))}
         </tbody>
       </table>

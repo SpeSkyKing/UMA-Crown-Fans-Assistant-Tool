@@ -1,18 +1,23 @@
 import React, { useState } from "react";
-import {InputField} from '../common/inputField';
-import {PasswordForgetProps} from '../interface/props';
+import { InputField } from '../common/inputField';
+import { PasswordForgetProps } from '../interface/props';
 
+//パスワードを忘れた場合の画面情報
 export const PasswordForget: React.FC<PasswordForgetProps> = ({ onReturn }) => {
-  const [email, setEmail] = useState<string>("");
+  // メールアドレスの状態管理
+  const [ email , setEmail ] = useState<string>("");
 
+  // 親画面への通知
   const handleReturn = () => {
     onReturn();
   };
 
+  // メールアドレスの変更処理
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
+  // Todo 今後メール送信処理の作成
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -22,7 +27,7 @@ export const PasswordForget: React.FC<PasswordForgetProps> = ({ onReturn }) => {
     }
 
     try {
-      const response = await fetch("https://your-laravel-api-endpoint.com/password-forget", {
+      const response = await fetch("/password-forget", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

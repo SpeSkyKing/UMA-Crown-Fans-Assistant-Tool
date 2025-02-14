@@ -1,8 +1,11 @@
 import React from 'react';
-import {ActerListDataProps} from '../interface/prpps';
-import {TdItem} from '../../common/tdItem';
+import { ActerListDataProps } from '../../interface/props';
+import { TdItem } from '../../common/tdItem';
+
+//声優情報表示画面のレコード情報を定義する
 export const ActerListData : React.FC<ActerListDataProps> = ({acter}) => {
 
+    //現在の時刻と生年月日を比較して年齢を算出する
     function calculateAge(birthDate: Date): string {
         if (typeof birthDate === 'string') {
             birthDate = new Date(birthDate);

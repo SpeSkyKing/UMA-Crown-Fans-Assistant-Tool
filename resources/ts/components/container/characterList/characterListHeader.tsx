@@ -1,9 +1,8 @@
 import { Header } from "../../common/header";
 
+//ヘッダーに表示する情報を定義する
 const raceListHeaderItem = [
     {display:'名前'},
-    {display:'名手'},
-    {display:'ファン数'},
     {display:'芝'},
     {display:'ダート'},
     {display:'短距離'},
@@ -14,6 +13,8 @@ const raceListHeaderItem = [
     {display:'先行'},
     {display:'差し'},
     {display:'追込'},
+    {display:'名手'},
+    {display:'ファン数'},
     {display:'ファン'}
   ];
 

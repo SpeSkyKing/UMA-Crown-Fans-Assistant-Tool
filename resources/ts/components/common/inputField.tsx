@@ -1,5 +1,7 @@
 import React from 'react';
-import {InputFieldProps} from '../interface/props';
+import { InputFieldProps } from '../interface/props';
+
+//テキストなどのinput要素を構成するコンポーネント
 export const InputField: React.FC<InputFieldProps> = ({
   id,
   label,

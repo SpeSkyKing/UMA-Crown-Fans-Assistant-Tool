@@ -1,7 +1,9 @@
 import React from 'react';
-import {RaceListdataProps} from '../../interface/props';
+import {RaceListDataProps} from '../../interface/props';
 import {TdItem} from '../../common/tdItem';
-export const RaceListdata : React.FC<RaceListdataProps> = ({race}) => {
+
+//声優情報表示画面のレコード情報を定義する
+export const RaceListData : React.FC<RaceListDataProps> = ({race}) => {
     let raceDistance = "";
     switch (Number(race.distance)) {
         case 1:
