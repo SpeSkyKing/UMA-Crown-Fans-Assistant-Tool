@@ -1,20 +1,18 @@
-import {CharacterListDataProps} from '../../interface/props';
-import {TdItem} from '../../common/tdItem';
+import { CharacterListDataProps } from '../../interface/props';
+import { TdItem } from '../../common/tdItem';
+
+//ウマ娘情報表示画面のレコード情報を定義する
 export const CharacterListData : React.FC<CharacterListDataProps> = ({registUmamusume,returnFanUp}) => {
 
+    //親画面へファン数変更ボタン処理を通知する
     const fanUp = () =>{
         returnFanUp(registUmamusume);
     }
+
     return (
         <tr>
             <TdItem content=
             {registUmamusume.umamusume.umamusume_name}
-            />
-            <TdItem content=
-            {registUmamusume.fans >= 100000000 ? '名手' : 'なし'}
-            />
-            <TdItem content=
-            {registUmamusume.fans.toString()+"人"}
             />
             <TdItem content=
             {registUmamusume.umamusume.turf_aptitude.toString()}
@@ -45,6 +43,12 @@ export const CharacterListData : React.FC<CharacterListDataProps> = ({registUmam
             />
             <TdItem content=
             {registUmamusume.umamusume.closer_aptitude.toString()}
+            />
+            <TdItem content=
+            {registUmamusume.fans >= 100000000 ? '名手' : 'なし'}
+            />
+            <TdItem content=
+            {registUmamusume.fans.toString()+"人"}
             />
             <td
             className="border border-gray-500 px-4 py-2 text-center text-black font-semibold cursor-pointer 

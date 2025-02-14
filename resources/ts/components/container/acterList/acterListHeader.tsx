@@ -1,5 +1,6 @@
 import { Header } from "../../common/header";
 
+//ヘッダーに表示する情報を定義する
 const ActerListHeaderItem = [
     {display:'担当ウマ娘'},
     {display:'名前'},

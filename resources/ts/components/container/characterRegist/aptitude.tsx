@@ -1,6 +1,8 @@
 import React from 'react';
-import {AptitudeProps} from '../../interface/props';
-export const Aptitude : React.FC<AptitudeProps> = ({name,aptitude})=> {
+import { AptitudeProps } from '../../interface/props';
+export const Aptitude : React.FC<AptitudeProps> = ({ name , aptitude })=> {
+
+    //適性にそってテキストの色を変更する
     const getAptitudeColor = (aptitude: string) => {
         switch (aptitude) {
           case 'A':

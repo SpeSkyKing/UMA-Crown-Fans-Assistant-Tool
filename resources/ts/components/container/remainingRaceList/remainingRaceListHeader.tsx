@@ -1,5 +1,6 @@
 import { Header } from "../../common/header";
 
+//ヘッダーに表示する情報を定義する
 const remainingRaceListHeaderItem = [
     {display:'出走処理'},
     {display:'ウマ娘名'},

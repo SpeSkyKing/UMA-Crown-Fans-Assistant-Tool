@@ -1,5 +1,7 @@
 import {CharacterRegistDataProps} from '../../interface/props';
 import {TdItem} from '../../common/tdItem';
+
+//声優情報表示画面のレコード情報を定義する
 export const CharacterRegistData : React.FC<CharacterRegistDataProps> = ({race,checked,onCheckboxChange}) => {
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

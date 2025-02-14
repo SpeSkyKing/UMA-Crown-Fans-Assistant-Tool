@@ -1,22 +1,46 @@
 import { useState } from "react";
-import {InputField} from '../common/inputField';
-import {RegistProps} from '../interface/props';
-export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
-    const [userName, setUserName] = useState("");
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [avatar, setAvatar] = useState<File | null>(null);
-    const [birthday, setBirthday] = useState("");
-    const [gender, setGender] = useState("2");
-    const [address, setAddress] = useState("");
-    const [country, setCountry] = useState("");
-    const [role, setRole] = useState("0");
+import { InputField } from '../common/inputField';
+import { RegistProps } from '../interface/props';
 
+//ユーザー情報を登録する画面
+export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
+    
+    // ユーザーの名前
+    const [ userName, setUserName ] = useState("");
+
+    // パスワード
+    const [ password, setPassword ] = useState("");
+
+    // Eメールアドレス
+    const [ email, setEmail ] = useState("");
+
+    // 電話番号
+    const [ phone, setPhone ] = useState("");
+
+    // ユーザーイメージ画像
+    const [ avatar, setAvatar ] = useState<File | null>(null);
+
+    // 誕生日
+    const [ birthday, setBirthday ] = useState("");
+
+    // ユーザーの名前
+    const [ gender, setGender ] = useState("2");
+
+    // ユーザーの名前
+    const [ address, setAddress ] = useState("");
+
+    // ユーザーの名前
+    const [ country, setCountry ] = useState("");
+
+    // ユーザーの名前
+    const [ role, setRole ] = useState("0");
+
+    //親画面に画面の終了を通知する
     const handleReturn = () =>{
         onReturn();
     } 
 
+    //ユーザー情報をサーバー側へ送信する
     const handleRegist = async ()  => {
         if (userName && password) {
             const formData = new FormData();
@@ -33,22 +57,20 @@ export const Regist :React.FC<RegistProps> = ({onReturn,onRegist}) => {
             formData.append("country", country);
             formData.append("role", role);
         try {
-            const response = await fetch("/api/user/regist", {
-                method: "POST",
-                body: formData,
-            });
+                const response = await fetch("/api/user/regist", {
+                    method: "POST",
+                    body: formData,
+                });
 
-            if (!response.ok) {
-                throw new Error("ユーザーの登録に失敗しました");
+                if (!response.ok) {
+                    throw new Error("ユーザーの登録に失敗しました");
+                }
+                const data = await response.json();
+                onRegist(userName, password);
+                alert("登録が完了しました！");
+                } catch (error) {
+                    alert("エラーが発生しました。");
             }
-            const data = await response.json();
-            onRegist(userName, password);
-            alert("登録が完了しました！");
-        } catch (error) {
-
-        } finally {
-
-        }
         } else {
             alert("ユーザーIDとパスワードを入力してください。");
         }

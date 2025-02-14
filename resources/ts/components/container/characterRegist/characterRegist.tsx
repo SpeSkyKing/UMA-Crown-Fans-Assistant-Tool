@@ -1,16 +1,28 @@
-import React, { useState,useEffect} from 'react';
-import {Race,Umamusume} from '../../interface/interface';
-import {CharacterRegistHeader} from './characterRegistHeader';
-import {CharacterRegistData} from './characterRegistData';
+import React, { useState,useEffect } from 'react';
+import { Race , Umamusume } from '../../interface/interface';
+import { CharacterRegistHeader } from './characterRegistHeader';
+import { CharacterRegistData } from './characterRegistData';
 import { Aptitude } from './aptitude';
 
+//ウマ娘登録画面
 export const CharacterRegist = () => {
 
+    //レース情報を格納する配列
     const [races, setRaces] = useState<Race[]>([]);
+
+    //ウマ娘情報を格納する配列
     const [umamusumes,setUmamusumes] = useState<Umamusume[]>([]);
+
+    //選択しているウマ娘情報
     const [selectedUmamusume, setSelectedUmamusume] = useState<Umamusume | undefined>();
+
+    //登録対象のレースを格納する配列
     const [registRace,setregistRace] = useState<number[]>([]);
+
+    //変更後のファン数を格納
     const [fans, setFans] = useState<number>(0);
+    
+    //トークン
     const token = localStorage.getItem('auth_token');
 
     useEffect(() => {
@@ -18,6 +30,7 @@ export const CharacterRegist = () => {
       fetchUmamusumes();
     },[]);
 
+    
     useEffect(() => {
       if (umamusumes.length > 0) {
         setSelectedUmamusume(umamusumes[0]);

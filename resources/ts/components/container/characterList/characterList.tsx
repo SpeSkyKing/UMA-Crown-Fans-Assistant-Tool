@@ -1,19 +1,35 @@
-import React,{useState,useEffect} from 'react';
-import {CharacterListHeader} from './characterListHeader';
-import {CharacterListData} from './characterListData';
-import {RegistUmamusume} from '../../interface/interface';
+import { useState , useEffect } from 'react';
+import { CharacterListFans } from './characterListFans';
+import { CharacterListHeader } from './characterListHeader';
+import { CharacterListData } from './characterListData';
+import { RegistUmamusume } from '../../interface/interface';
+
+//ウマ娘情報表示画面
 export const CharacterList = () => {
+      //ウマ娘の情報を格納するリスト
       const [registUmamusumes, setRegistUmamusume] = useState<RegistUmamusume[]>([]);
+      
+      //API取得中の状態を表示する判定
       const [loading,setLoading] = useState(true);
-      const [selectUmamusume,SetSelectUmamusume] = useState<RegistUmamusume>();
-      const [fanCount, setFanCount] = useState('');
+
+      //ファン数に関しての情報を表示する場合の選択したウマ娘の情報を格納する
+      const [selectUmamusume,SetSelectUmamusume] = useState<RegistUmamusume | undefined>(undefined);
+
+      //設定後のファン数情報を格納する
+      const [fanCount, setFanCount] = useState<number>(0);
+
+      //ファン数入力画面の表示有無を設定する
       const [fanDisplay,isFanDisplay] = useState(false);
+
+      //トークン情報を格納する
       const token = localStorage.getItem('auth_token');
       
+      //非同期でウマ娘の情報取得処理を実行する
       useEffect(() => {
             fetchUmamusumes();
       },[]);
 
+      //ユーザーが登録したウマ娘の情報を取得する
       const fetchUmamusumes = async () => {
         try {
           const response = await fetch("/api/umamusume/userRegist", {
@@ -32,6 +48,7 @@ export const CharacterList = () => {
         }
       }
 
+      //対象のウマ娘のファン数を変動させるAPI
       const fetchFanUp = async () => {
         try {
           const response = await fetch("/api/umamusume/fanUp", {
@@ -50,15 +67,25 @@ export const CharacterList = () => {
         }
       }
 
+      //ファン数変動画面を表示する
       const handleFansUp = (registUmamusume:RegistUmamusume) => {
         SetSelectUmamusume(registUmamusume);
         isFanDisplay(true);
       }
 
+      //ファン数を変動させる
+      const countUp = (fan:number) => {
+        setFanCount(fan);
+      }
+
+
+      //対象のウマ娘のファン数を変動させ、画面をクローズさせる
       const addFan = () => {
         fetchFanUp();
         isFanDisplay(false);
       }
+
+      //ファン数変動画面を閉じる
       const onReturn = () => {
         isFanDisplay(false);
       }
@@ -70,36 +97,7 @@ export const CharacterList = () => {
 
       if (fanDisplay) {
         return (
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="text-center text-2xl font-bold text-black my-6">
-            {selectUmamusume?.umamusume.umamusume_name}
-            </div>
-            <div className="text-center text-2xl font-bold text-black my-6">
-            現在の値 {selectUmamusume?.fans} 人
-            </div>
-            <div className="flex items-center space-x-4">
-              <input 
-                type="number" 
-                className="border border-gray-300 px-4 py-2 rounded-lg text-xl" 
-                placeholder="ファン数を入力"
-                onChange={(e) => setFanCount(e.target.value)} 
-              />
-              
-              <button
-                className="bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 hover:from-pink-500 hover:to-blue-500 text-white font-bold py-2 px-6 rounded-lg text-xl transition-all duration-300 ease-in-out transform hover:scale-105"
-                onClick={addFan}
-              >
-                変更
-              </button>
-              
-              <button
-                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg text-xl transition-all duration-300 ease-in-out transform hover:scale-105"
-                onClick={onReturn}
-              >
-                戻る
-              </button>
-            </div>
-          </div>
+          <CharacterListFans selectUmamusume={selectUmamusume} countUp={countUp} returnAddFan={addFan} returnOnReturn={onReturn}></CharacterListFans>
         );
       }
       

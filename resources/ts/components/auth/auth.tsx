@@ -1,15 +1,26 @@
 import { useState } from "react";
 import { Regist } from './regist';
 import { PasswordForget } from './passwordForget';
-import {InputField} from '../common/inputField';
-import {AuthProps} from '../interface/props';
-export const Auth: React.FC<AuthProps>  = ({onLogin}) => {
-    const [userName, setUserName] = useState("");
-    const [password, setPassword] = useState("");
-    const [passwordForget,setPasswordForget] = useState(false);
-    const [isRegistering, setIsRegistering] = useState(false);
-    const token = localStorage.getItem("auth_token");
+import { InputField } from '../common/inputField';
+import { AuthProps } from '../interface/props';
 
+//ログイン処理を行う画面
+export const Auth: React.FC<AuthProps>  = ({onLogin}) => {
+    // ユーザーの名前
+    const [ userName, setUserName ] = useState("");
+
+    // パスワード
+    const [ password, setPassword ] = useState("");
+
+    // パスワードを忘れた場合の画面表示状態管理
+    const [ passwordForget , setPasswordForget ] = useState(false);
+
+    // ユーザー登録の画面表示状態管理
+    const [ isRegistering , setIsRegistering ] = useState(false);
+
+    /**
+     * ユーザーのログインを処理する関数。
+     */
     const handleLogin = () => {
         if (userName && password) {
             fetch("/api/user/login", {
@@ -24,6 +35,8 @@ export const Auth: React.FC<AuthProps>  = ({onLogin}) => {
                 if (data.message === "ログイン成功") {
                     localStorage.setItem("auth_token", data.token);
                     onLogin();
+                }else{
+                    alert(data.message);
                 }
             })
             .catch((error) => {
@@ -34,6 +47,7 @@ export const Auth: React.FC<AuthProps>  = ({onLogin}) => {
         }
     };
 
+    //ユーザー登録後、ログインする処理
     const handleRegist = (userName: string, password: string) => {
         setIsRegistering(false);
         setUserName(userName);
@@ -41,14 +55,17 @@ export const Auth: React.FC<AuthProps>  = ({onLogin}) => {
         handleLogin();
     };
 
+    //ユーザー登録画面表示処理
     const newRegist = () =>{
         setIsRegistering(true);
     };
 
+    //パスワードを忘れた場合の画面表示処理
     const handlePasswordForget = () =>{
         setPasswordForget(true);
     }
 
+    //ログイン画面の表示処理
     const handleTop = () =>{
         setIsRegistering(false);
         setPasswordForget(false);
