@@ -11,8 +11,10 @@ use App\Models\Umamusume;
 use App\Models\RegistUmamusume;
 use App\Models\RegistUmamusumeRace;
 
+//ウマ娘のデータを取得するコントローラー
 class UmamusumeController extends Controller
 {
+    //ユーザーが登録していない、ウマ娘情報を取得するAPI
     public function registList(){
         $userId = Auth::user()->user_id;
 
@@ -24,6 +26,7 @@ class UmamusumeController extends Controller
         
     }
 
+    //ユーザーが選択した、ウマ娘のデータを登録するAPI
     public function regist(Request $request){
         $umamusumeId = $request->get('umamusumeId');
         $raceIdArray = $request->get('raceIdArray');
@@ -57,6 +60,7 @@ class UmamusumeController extends Controller
         ], 201);
     }
 
+    //ユーザーが登録したウマ娘の情報を取得するAPI
     public function userRegist(){
         $userId = Auth::user()->user_id;
 
@@ -65,6 +69,7 @@ class UmamusumeController extends Controller
         return response()->json(['data' => $registUmamusume]);
     }
 
+    //ユーザーが入力したファン数をユーザーが登録したウマ娘データに反映させるAPI
     public function fanUp(Request $request){
         $userId = Auth::user()->user_id;
         $umamusumeId = $request->json('umamusumeId');
