@@ -12,8 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Jenssegers\Agent\Agent;
 use Carbon\Carbon;
 
+//レース関連のデータを取得するコントローラー
 class UserPersonalController extends Controller
 {
+    //ユーザーを登録するAPI
     public function regist(Request $request)
     {
         try {
@@ -64,6 +66,7 @@ class UserPersonalController extends Controller
         ], 201);
     }
 
+    //ログインのためのAPI
     public function login(Request $request) 
     {
         $request->validate([
@@ -72,6 +75,10 @@ class UserPersonalController extends Controller
         ]);
 
         $user = UserPersonal::where('user_name', $request->userName)->first();
+
+        if(is_null($user)){
+            return response()->json(['message' => 'ユーザーが見つかりません。'], 401);
+        }
 
         if ($user && Hash::check($request->password, $user->password)) {
 
@@ -100,11 +107,12 @@ class UserPersonalController extends Controller
                 'message' => 'ログイン成功',
                 'token' => $token,
             ], 200);
+        }else{
+            return response()->json(['message' => 'パスワードが違います。'], 401);
         }
-
-        return response()->json(['message' => '認証失敗'], 401);
     }
 
+    //ログアウトのためのAPI
     public function logout()
     {
         Auth::user()->tokens->each(function ($token) {
@@ -114,7 +122,8 @@ class UserPersonalController extends Controller
         return response()->json(['message' => 'ログアウトしました']);
     }
 
-    public function getUserData(Request $request)
+    //ログイン中のユーザー情報を取得するAPI
+    public function getUserData()
     {
         $user = Auth::user()->only([
             'user_name',

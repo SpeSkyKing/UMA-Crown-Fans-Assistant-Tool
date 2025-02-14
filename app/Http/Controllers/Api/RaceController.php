@@ -13,10 +13,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
+//レース関連のデータを取得するコントローラー
 class RaceController extends Controller
 {
+    //ユーザーが選択したウマ娘のオブジェクトを格納する変数
     private Umamusume $selectUmamusume;
 
+    //レースのリストをDBから取得するAPI
     public function raceList()
     {
         $races = Race::orderByRaw("CASE
@@ -32,6 +35,7 @@ class RaceController extends Controller
         return response()->json(['data' => $races]);
     }
 
+    //ウマ娘を登録する際のレース情報を加工してDBから取得するAPI
     public function raceRegistList()
     {
         $races = Race::whereIn('race_rank', [1, 2, 3])
@@ -43,6 +47,7 @@ class RaceController extends Controller
         return response()->json(['data' => $races]);
     }
 
+    //ユーザーが登録したウマ娘の未出走データを取得するAPI
     public function remaining(){
         $userId = Auth::user()->user_id;
         $registUmamusumeArray = RegistUmamusume::where('user_id', $userId)->with('umamusume')->get();
@@ -91,6 +96,9 @@ class RaceController extends Controller
         return response()->json(['data' => $results]);
     }
 
+    //シーズン、出走月、前後半
+    //また対象うウマ娘が出走していない
+    //レースを取得するAPi
     public function remainingToRace(Request $request){
         $userId = Auth::user()->user_id;
         $umamusumeId = $request->json('umamusumeId');
@@ -141,6 +149,7 @@ class RaceController extends Controller
         return response()->json(['data' => $race,'Props' => $props]);
     }
 
+    //全体残レース、シーズン、出走月、前後半を引数としてレースを取得する関数
     private function setRemainingRace(array $registUmamusumeRaceArray,int $season,int $month,int $half){
         $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3]);
         switch($season){
@@ -156,6 +165,7 @@ class RaceController extends Controller
         }
     }
 
+    //対象のレースに対して出走した結果を残すAPI
     public function raceRun (Request $request){
         $userId = Auth::user()->user_id;
         $umamusumeId = $request->json('umamusumeId');
@@ -177,6 +187,7 @@ class RaceController extends Controller
         ], 201);
     }
 
+    //対象ウマ娘の残レースと適性に合わせて推奨される因子とシナリオを取得するAPI
     public function remainingPattern(Request $request){
         
         //一連の処理
@@ -225,6 +236,7 @@ class RaceController extends Controller
         return response()->json(['data' => $result]);
     }
 
+    //残レースに対象ウマ娘のシナリオと被るレースが存在するか検証する関数
     private function checkDuplicateScenarioRace(int $umamusumeId ,object $remainingAllRaceCollections){
         $result = false;
         $scenarioRaceArray = ScenarioRace::where('umamusume_id', $umamusumeId)->get();
@@ -281,6 +293,7 @@ class RaceController extends Controller
         return $result;
     }
 
+    //残レースのレースをバ場と距離に分割してランク付けする関数
     private function getRankedRaceCounts(object $remainingAllRaceCollections)
     {
         $raceCounts = [
@@ -315,6 +328,7 @@ class RaceController extends Controller
         return $rankedRaceCounts;
     }
 
+    //対象の適性を引き上げるために必要な因子を計算する関数
     private function setRequiredsFactor(string $aptitude,string $aptitudeType,array $array){
         switch($aptitude){
             case 'E':
@@ -345,6 +359,7 @@ class RaceController extends Controller
         return $array;
     }
 
+    //残レースでラークシナリオを走るべきレースがあるか検証する関数
     private function checkLarcScenario(object $remainingAllRaceCollections){
         if($remainingAllRaceCollections->where("scenario_flag",1)->count() == 0){
             //以下条件に当てはまれば
@@ -369,6 +384,7 @@ class RaceController extends Controller
         return false;
     }
 
+    //残レースから必要な因子情報を格納する関数
     private function getRequiredsFactor(object $remainingAllRaceCollections){
         $rankRace = $this->getRankedRaceCounts($remainingAllRaceCollections);
 
