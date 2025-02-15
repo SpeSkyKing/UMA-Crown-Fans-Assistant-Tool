@@ -9,6 +9,7 @@ const remainingRaceListManualHeaderItem = [
     {display:'出走'}
   ];
 
+//レース出走処理画面のヘッダー情報
 export const RemainingRaceListManualHeader = () => {
     return (
         <Header ItemArray={remainingRaceListManualHeaderItem} />

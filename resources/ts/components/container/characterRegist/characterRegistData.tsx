@@ -1,9 +1,10 @@
-import {CharacterRegistDataProps} from '../../interface/props';
-import {TdItem} from '../../common/tdItem';
+import { CharacterRegistDataProps } from '../../interface/props';
+import { TdItem } from '../../common/tdItem';
 
-//声優情報表示画面のレコード情報を定義する
-export const CharacterRegistData : React.FC<CharacterRegistDataProps> = ({race,checked,onCheckboxChange}) => {
+//ウマ娘登録画面のレコード情報を定義する
+export const CharacterRegistData : React.FC<CharacterRegistDataProps> = ({ race , checked , onCheckboxChange }) => {
     
+    //選択したレコードに対してチェック処理を行う
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const isChecked = e.target.checked;
         onCheckboxChange(race.race_id, isChecked);

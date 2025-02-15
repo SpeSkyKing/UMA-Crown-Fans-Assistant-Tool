@@ -169,7 +169,7 @@ export interface RemainingRaceListItemProps {
 
 //remainingRaceListManual.tsxで利用する
 export interface RemainingRaceListManualProps {
-    umamusume: Umamusume | undefined;
+    umamusume: Umamusume ;
     onReturn: () => void;
 }
 

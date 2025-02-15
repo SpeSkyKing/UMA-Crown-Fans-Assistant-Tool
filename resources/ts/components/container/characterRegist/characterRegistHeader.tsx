@@ -11,6 +11,7 @@ const raceListHeaderItem = [
     {display:'月'}
   ];
 
+//ウマ娘登録画面のヘッダー情報
 export const CharacterRegistHeader = () => {
     return (
         <Header ItemArray={raceListHeaderItem} />

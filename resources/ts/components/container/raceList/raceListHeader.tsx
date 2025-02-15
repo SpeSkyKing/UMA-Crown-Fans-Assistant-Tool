@@ -12,6 +12,7 @@ const raceListHeaderItem = [
     {display:'月'}
   ];
 
+//レース情報表示画面のヘッダー情報
 export const RaceListHeader = () => {
     return (
         <Header ItemArray={raceListHeaderItem} />

@@ -14,6 +14,7 @@ const remainingRaceListHeaderItem = [
     {display:'中距離'}
   ];
 
+//残レース情報表示画面のヘッダー情報
 export const RemainingRaceListHeader = () => {
     return (
         <Header ItemArray={remainingRaceListHeaderItem} />

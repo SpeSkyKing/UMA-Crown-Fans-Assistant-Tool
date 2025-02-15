@@ -1,9 +1,11 @@
 import React from 'react';
-import {TdItem} from '../../common/tdItem';
+import { TdItem } from '../../common/tdItem';
 import { RemainingRaceListDataProps } from '../../interface/props';
 
 //声優情報表示画面のレコード情報を定義する
-export const RemainingRaceListData: React.FC<RemainingRaceListDataProps> = ({ remainingRace, checkRaces }) => {
+export const RemainingRaceListData: React.FC<RemainingRaceListDataProps> = ({ remainingRace , checkRaces }) => {
+
+    //出走画面表示処理を親へ通知する
     const handleClick = () => {
         checkRaces(remainingRace.umamusume);
     };

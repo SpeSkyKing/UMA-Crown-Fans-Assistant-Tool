@@ -5,6 +5,7 @@ const LiveListHeaderItem = [
     {display:'曲名'}
   ];
 
+//ライブ情報表示画面のヘッダー情報
 export const LiveListHeader = () => {
     return (
         <Header ItemArray={LiveListHeaderItem} />

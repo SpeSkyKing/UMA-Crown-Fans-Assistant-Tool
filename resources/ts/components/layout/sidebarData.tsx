@@ -1,3 +1,4 @@
+//サイドバー情報
 export const sidebarComponents = [
     { id: 1, name: 'ウマ娘情報登録', url: 'characterRegist',img:'SpecialWeek.png'},
     { id: 2, name: 'ウマ娘情報表示', url: 'characterList',img:'SeiunSky.png'},

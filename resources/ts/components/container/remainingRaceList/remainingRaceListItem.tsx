@@ -1,8 +1,13 @@
 import React from 'react';
-import {RemainingRaceListItemProps} from '../../interface/props';
-export const RemainingRaceListItem : React.FC<RemainingRaceListItemProps> = ({race,runRace}) => {
+import { RemainingRaceListItemProps } from '../../interface/props';
+
+//残レース情報表示画面のレコード情報
+export const RemainingRaceListItem : React.FC<RemainingRaceListItemProps> = ({ race , runRace }) => {
+
     let raceDistance = "";
+
     let distanceBgColorClass = "";
+
     switch (Number(race.distance)) {
         case 1:
             raceDistance = "短距離";
@@ -25,6 +30,7 @@ export const RemainingRaceListItem : React.FC<RemainingRaceListItemProps> = ({ra
     }
 
     let raceCount = 0;
+
     if(race.junior_flag){
         raceCount++;
     }

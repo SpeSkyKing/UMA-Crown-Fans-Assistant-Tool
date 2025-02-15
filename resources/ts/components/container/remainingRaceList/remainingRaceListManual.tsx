@@ -1,23 +1,47 @@
 import { useEffect, useState } from 'react';
 import { Race } from '../../interface/interface';
-import {RemainingRaceListItem} from './remainingRaceListItem';
-import {RemainingRaceListManualProps} from '../../interface/props';
+import { RemainingRaceListItem } from './remainingRaceListItem';
+import { RemainingRaceListManualProps } from '../../interface/props';
 import { RemainingRaceListManualHeader } from './remainingRaceListManualHeader';
-export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = ({umamusume,onReturn}) => {
-    const [selectedSeason, setSelectedSeason] = useState(1);
-    const [selectedMonth, setSelectedMonth] = useState(7);
-    const [selectedHalf, setSelectedHalf] = useState(1);
+
+//レース出走画面
+export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = ({ umamusume , onReturn }) => {
+    
+    //選択しているシーズン ※初期はジュニアのため1
+    const [ selectedSeason, setSelectedSeason ] = useState(1);
+    
+    //選択している出走月 ※初期は7月のため7
+    const [ selectedMonth, setSelectedMonth ] = useState(7);
+    
+    //選択している前後半 ※初期は後半のため1
+    const [ selectedHalf, setSelectedHalf ] = useState(1);
+    
+    //出走オートモードか判定する処理
+    const [ isAutoMode , setIsAutoMode ] = useState(false);
+    
+    //画面表示するレース情報を格納する配列
+    const [ races , setRaces ] = useState<Race[]>([]);
+    
+    //前へボタンを表示するか判定する
+    // Todo 現時点での時間軸よりも前にレースが存在しない場合、戻るボタンを表示する
+    const [ isRaceReturn , setIsRaceReturn ] = useState(true);
+    
+    //次へボタンを表示するか判定する
+    // Todo 現時点での時間軸よりも次にレースが存在しない場合、戻るボタンを表示する
+    const [ isRaceForward , setIsRaceForward ] = useState(true);
+    
+    //選択ウマ娘情報
     const [selectUmamsume,setSelectUmamsume] = useState(umamusume);
-    const [isAutoMode, setIsAutoMode] = useState(false);
-    const [races,setRaces] = useState<Race[]>([]);
-    const [isRaceReturn,setIsRaceReturn] = useState(true);
-    const [isRaceForward,setIsRaceForward] = useState(true);
+    
+    //トークン情報
     const token = localStorage.getItem('auth_token');
 
+    //オートモードチェック処理
     const handleAutoModeChange = () => {
         setIsAutoMode(!isAutoMode);
     };
 
+    //出走処理ボタン
     const handleRunRace = (raceId : number) => {
         raceRunRegist(raceId);
     };
@@ -26,6 +50,7 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
         fetchRemainingRaces();
     },[]);
 
+    //日程が変更された時にレース情報を取得する
     useEffect(() => {
         if(selectedSeason == 1 && selectedMonth <= 7){
             setIsRaceReturn(false);
@@ -42,6 +67,7 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
         }
       }, [selectedSeason, selectedMonth, selectedHalf]);
 
+    //シーズン情報などからレースを取得する
     const fetchRemainingRaces = async () => {
           try {
             if (!token) {
@@ -67,6 +93,7 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
           }
     };
 
+    //レース出走処理
     const raceRunRegist = async (raceId : number)  => {
         try {
             if (!token) {
@@ -97,6 +124,7 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
         }
     };
 
+    //前へボタン処理
     const raceReturn = () =>{
         let isHalf = selectedHalf == 1 ? 0 : 1;
         let isMunth = selectedMonth;
@@ -115,6 +143,7 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
         setSelectedSeason(isSeason);
     }
 
+    //次へボタン処理
     const raceForward = () =>{
         let isHalf = selectedHalf == 1 ? 0 : 1;
         let isMunth = selectedMonth;
@@ -133,11 +162,11 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
         setSelectedSeason(isSeason);
     }
 
+    //画面終了処理
     const handleReturn = () => {
         onReturn();
     }
   
-
     return (
         <div className="min-h-screen flex flex-col items-center p-6">
             <div className="text-center text-2xl font-bold text-black my-6">

@@ -1,24 +1,39 @@
-import React,{useState,useEffect} from 'react';
-import {Live,Umamusume} from '../../interface/interface';
-import {LiveListHeader} from './liveListHeader';
-import {LiveListData} from './liveListData';
-import {LiveListCharacterHeader} from './liveListCharacterHeader';
-import {LiveListCharacterData} from './liveListCharacterData';
+import { useState , useEffect } from 'react';
+import { Live,Umamusume } from '../../interface/interface';
+import { LiveListHeader } from './liveListHeader';
+import { LiveListData } from './liveListData';
+import { LiveListCharacterHeader } from './liveListCharacterHeader';
+import { LiveListCharacterData } from './liveListCharacterData';
+
+//ライブ情報表示画面
 export const LiveList = () => {
 
+    //ライブ情報を格納する配列
     const [lives, setLives] = useState<Live[]>([]);
+    
+    //選択したライブ情報を格納する
     const [selectLive,setSelectLive] = useState<Live>();
+    
+    //対象のライブ情報に紐づくウマ娘を格納する
     const [umamusumes, setUmamusumes] = useState<Umamusume[]>([]);
+    
+    //ローディング画面
     const [loading,setLoading] = useState(true);
+    
+    //ライブを選択している状態
     const [isCharacter,setIsCharacter] = useState(false);
+    
+    //トークン情報
     const token = localStorage.getItem('auth_token');
 
+    //ライブを選択した処理
     const onClick = (live : Live) =>{
       setSelectLive(live);
       fetchUmamusumes(live);
       setIsCharacter(true);
     }
 
+    //ライブ選択後戻るボタンを選択した処理
     const onReturn = () => {
       setIsCharacter(false);
     }
@@ -27,6 +42,7 @@ export const LiveList = () => {
           fetchlives();
     },[]);
 
+    //ライブに紐づくウマ娘を取得する処理
     const fetchUmamusumes = async (live : Live) => {
       try {
         if (!token) {
@@ -50,6 +66,7 @@ export const LiveList = () => {
       }
     }
 
+    //ライブ情報を取得する処理
     const fetchlives = async () => {
       try {
         const response = await fetch("/api/live/list");
