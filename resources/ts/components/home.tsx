@@ -1,14 +1,25 @@
-import {useState,useEffect} from 'react';
-import {Sidebar} from './layout/sidebar';
-import {Content} from './layout/content';
-import {Auth} from './auth/auth';
-import {User} from './interface/interface';
+import { useState , useEffect } from 'react';
+import { Sidebar } from './layout/sidebar';
+import { Content } from './layout/content';
+import { Auth } from './auth/auth';
+import { User } from './interface/interface';
 
+//エントリーポイント
 export const Home = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [selectedContent, setSelectedContent] = useState("characterRegist");
-    const [user, setUser] = useState<User>();
+
+    //ログイン後か判断する
+    const [ isAuthenticated, setIsAuthenticated ] = useState(false);
+    
+    //選択中のコンテンツ名を格納する
+    const [ selectedContent, setSelectedContent ] = useState("characterRegist");
+    
+    //ログイン中のユーザー情報
+    const [ user, setUser ] = useState<User>();
+    
+    //トークン情報
     const token = localStorage.getItem("auth_token");
+    
+    //ユーザーの表示画像
     const image = user?.user_image ? user?.user_image : "StillinLove.png";
 
     useEffect(() => {
@@ -21,14 +32,17 @@ export const Home = () => {
         getUserdata();
     }, []);
 
+    //選択中のコンテンツを変更する
     const handleSelect = ( content:string ) => {
         setSelectedContent(content);
     }
 
+    //ログイン処理
     const handleLogin = () => {
         setIsAuthenticated(true);
     }
 
+    //ログアウト処理
     const handleLogout = async () => {
         try {
           const response = await fetch('/api/user/logout', {
@@ -50,6 +64,7 @@ export const Home = () => {
         }
       };
 
+      //ユーザーデータを取得する処理
       const getUserdata = async () => {
         if (!token) {
             console.error('トークンが見つかりません');

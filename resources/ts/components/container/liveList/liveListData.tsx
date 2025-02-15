@@ -1,8 +1,8 @@
 import React from 'react';
-import {LiveListDataProps} from '../../interface/props';
+import { LiveListDataProps } from '../../interface/props';
 
 //声優情報表示画面のレコード情報を定義する
-export const LiveListData : React.FC<LiveListDataProps> = ({live,onClick}) => {
+export const LiveListData : React.FC<LiveListDataProps> = ({ live , onClick }) => {
 
     const handleClick = () =>{
         onClick(live);

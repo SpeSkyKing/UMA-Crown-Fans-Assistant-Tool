@@ -1,21 +1,34 @@
-import React,{useState,useEffect} from 'react';
-import { Umamusume ,RemainingRace,RaceEntryPattern} from '../../interface/interface';
-import {RemainingRaceListHeader} from './remainingRaceListHeader';
-import {RemainingRaceListData} from './remainingRaceListData';
-import {RemainingRaceListManual} from "./remainingRaceListManual";
+import { useState , useEffect } from 'react';
+import { Umamusume , RemainingRace , RaceEntryPattern } from '../../interface/interface';
+import { RemainingRaceListHeader } from './remainingRaceListHeader';
+import { RemainingRaceListData } from './remainingRaceListData';
+import { RemainingRaceListManual } from "./remainingRaceListManual";
+
+//残レース情報表示画面
 export const RemainingRaceList = () => {
-    const [remainingRaces, setRemainingRaces] = useState<RemainingRace[]>([]);
-    const [loading,setLoading] = useState(true);
-    const [isCheckRace,setIsCheckRace] = useState(false);
-    const [selectUmamusume, setSelectUmamusume] = useState<Umamusume | undefined>(undefined);
-    const [raceEntryPattern,setRaceEntryPattern] = useState<RaceEntryPattern>();
-    const [isManualRaces,setIsManualRaces] = useState(false);
+    
+    //残レース情報を格納する配列
+    const [ remainingRaces, setRemainingRaces ] = useState<RemainingRace[]>([]);
+    
+    //ローディング画面
+    const [ loading , setLoading ] = useState(true);
+    
+    //ウマ娘を選択しているか判定する
+    const [ isCheckRace , setIsCheckRace ] = useState(false);
+    
+    //選択したウマ娘情報を格納する
+    const [ selectUmamusume , setSelectUmamusume ] = useState<Umamusume | undefined>(undefined);
+    
+    //推奨情報を格納する
+    const [ raceEntryPattern , setRaceEntryPattern ] = useState<RaceEntryPattern>();
+    
+    //レース出走処理画面の表示有無
+    const [ isManualRaces , setIsManualRaces ] = useState(false);
+    
+    //トークン情報
     const token = localStorage.getItem('auth_token');
 
-    useEffect(() => {
-        fetchRaces();
-    },[]);
-
+    //残レース情報を取得する
     const fetchRaces = async () => {
       try {
         const response = await fetch("/api/race/remaining",{
@@ -34,6 +47,7 @@ export const RemainingRaceList = () => {
       }
     }
 
+    //レース出走推奨パターンを取得する
     const fetchEntryPattern = async (umamusume : Umamusume) => {
           try {
             if (!token) {
@@ -55,22 +69,28 @@ export const RemainingRaceList = () => {
           }
     };
 
+    //出走を行う処理
     const openCheckRaces = (umamusume : Umamusume) => {
       setSelectUmamusume(umamusume);
       fetchEntryPattern(umamusume);
       setIsCheckRace(true);
     };
 
+    //戻るボタンを押下した処理
     const returnCheckRaces = () => {
       fetchRaces();
       setIsCheckRace(false);
       setIsManualRaces(false);
-
     }
 
+    //レース出走を表示する
     const onManualRaces = () =>{
       setIsManualRaces(true);
     }
+
+    useEffect(() => {
+      fetchRaces();
+    },[]);
 
     if (loading) {
       return <div className="min-h-full flex justify-center bg-cover"></div>

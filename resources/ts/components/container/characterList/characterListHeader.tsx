@@ -18,6 +18,7 @@ const raceListHeaderItem = [
     {display:'ファン'}
   ];
 
+//ウマ娘情報表示画面のヘッダー情報
 export const CharacterListHeader = () => {
     return (
         <Header ItemArray={raceListHeaderItem} />

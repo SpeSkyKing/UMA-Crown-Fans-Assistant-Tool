@@ -1,13 +1,19 @@
-import React,{useState} from 'react';
-import {SidebarTab} from './sidebarTab';
-import {sidebarComponents} from './sidebarData';
-import {SidebarProps} from '../interface/props';
-export const Sidebar:React.FC<SidebarProps> = ({onTabClick}) => {
-const [components, setItems] = useState(sidebarComponents);
+import React , { useState } from 'react';
+import { SidebarTab } from './sidebarTab';
+import { sidebarComponents } from './sidebarData';
+import { SidebarProps } from '../interface/props';
 
+//サイドバーのタブ情報
+export const Sidebar:React.FC<SidebarProps> = ({ onTabClick }) => {
+
+//選択中のコンポーネント情報
+const [ components, setItems ] = useState(sidebarComponents);
+
+    //タブ情報を変更する
     const changeTab = (content:string) => {
         onTabClick(content);
     };
+    
     return (
         <div className="min-h-full">
             <ul>

@@ -8,6 +8,7 @@ const ActerListHeaderItem = [
     {display:'年齢'},
   ];
 
+//声優情報表示画面のヘッダー情報
 export const ActerListHeader = () => {
     return (
         <Header ItemArray={ActerListHeaderItem} />

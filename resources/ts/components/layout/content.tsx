@@ -1,12 +1,13 @@
 import React from 'react';
-import {CharacterRegist} from '../container/characterRegist/characterRegist';
-import {CharacterList} from '../container/characterList/characterList';
-import {RaceList} from '../container/raceList/raceList';
-import {RemainingRaceList} from '../container/remainingRaceList/remainingRaceList';
-import {LiveList} from '../container/liveList/liveList';
-import {ActerList} from '../container/acterList/acterList';
-import {ContentProps} from '../interface/props';
+import { CharacterRegist } from '../container/characterRegist/characterRegist';
+import { CharacterList } from '../container/characterList/characterList';
+import { RaceList } from '../container/raceList/raceList';
+import { RemainingRaceList } from '../container/remainingRaceList/remainingRaceList';
+import { LiveList } from '../container/liveList/liveList';
+import { ActerList } from '../container/acterList/acterList';
+import { ContentProps } from '../interface/props';
 
+//コンテンツ情報
 export const Content :React.FC<ContentProps> = ({ selectedContent }) => {
     switch(selectedContent){
         case 'characterRegist':

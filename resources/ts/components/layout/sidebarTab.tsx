@@ -1,6 +1,10 @@
 import React from 'react';
-import {SidebarTabProps} from '../interface/props';
-export const SidebarTab:React.FC<SidebarTabProps> = ({name,onClick,img,url}) => {
+import { SidebarTabProps } from '../interface/props';
+
+//サイドバーに表示する内容
+export const SidebarTab:React.FC<SidebarTabProps> = ({ name , onClick , img , url }) => {
+    
+    //親コンポーネントへボタンクリックを通知する
     const onChange = () => {
         onClick(url);
     }
