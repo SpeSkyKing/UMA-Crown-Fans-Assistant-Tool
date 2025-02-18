@@ -23,11 +23,9 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
     const [ races , setRaces ] = useState<Race[]>([]);
     
     //前へボタンを表示するか判定する
-    // Todo 現時点での時間軸よりも前にレースが存在しない場合、戻るボタンを表示する
     const [ isRaceReturn , setIsRaceReturn ] = useState(true);
     
     //次へボタンを表示するか判定する
-    // Todo 現時点での時間軸よりも次にレースが存在しない場合、戻るボタンを表示する
     const [ isRaceForward , setIsRaceForward ] = useState(true);
     
     //選択ウマ娘情報
@@ -87,6 +85,8 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
             setSelectedSeason(props.season);
             setSelectedMonth(props.month);
             setSelectedHalf(props.half);
+            setIsRaceReturn(props.isRaceReturn);
+            setIsRaceForward(props.isRaceForward);
             setRaces(data);
           } catch (error) {
             console.error("Failed to fetch races:", error);

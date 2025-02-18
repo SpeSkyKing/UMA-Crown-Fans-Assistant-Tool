@@ -97,7 +97,7 @@ class RaceController extends Controller
     }
 
     //シーズン、出走月、前後半
-    //また対象うウマ娘が出走していない
+    //また対象ウマ娘が出走していない
     //レースを取得するAPi
     public function remainingToRace(Request $request){
         $userId = Auth::user()->user_id;
@@ -115,10 +115,6 @@ class RaceController extends Controller
         ->where('umamusume_id',$umamusumeId)->pluck('race_id')->toArray();
 
         $race = $this->setRemainingRace($registUmamusumeRaceArray,$season,$month,$half);
-
-        if($season == 3 && $month == 12 && $half == 1){
-            return response()->json(['data' => $race,'Props' => $props]);
-        }
 
         $loopCount = 0;
 
@@ -146,6 +142,9 @@ class RaceController extends Controller
             $loopCount++;
         }
 
+        $props['isRaceReturn'] = $this->setRaceReturn($registUmamusumeRaceArray,$props);
+        $props['isRaceForward'] = $this->setRaceForward($registUmamusumeRaceArray,$props);
+
         return response()->json(['data' => $race,'Props' => $props]);
     }
 
@@ -163,6 +162,143 @@ class RaceController extends Controller
                 return $remainingAllRace->where('half_flag',$half)->where('race_months',$month)->where('senior_flag',1)->get();
             break;
         }
+    }
+
+    //対象時期より前にレースが存在するか検証する関数
+    private function setRaceReturn(array $registUmamusumeRaceArray,array $prop){
+        $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3])->get();
+
+        $seasonArray = array();
+
+        for($s = $prop['season'] ; 0 < $s ; $s--){
+            $seasonArray[] = $s;
+        }
+
+        foreach($seasonArray as $season){
+            $month = $prop['month'];
+            $half =  $prop['half'];
+            if($prop['season'] == $season){
+                if($half == '1'){
+                    switch($season){
+                        case 1:
+                            if($remainingAllRace->where('half_flag',0)->where('race_months',$month)->where('junior_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                        case 2:
+                            if($remainingAllRace->where('half_flag',0)->where('race_months',$month)->where('classic_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                        case 3:
+                            if($remainingAllRace->where('half_flag',0)->where('race_months',$month)->where('senior_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                    }
+                }
+                switch($season){
+                    case 1:
+                        if($remainingAllRace->where('race_months','<',$month)->where('junior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 2:
+                        if($remainingAllRace->where('race_months','<',$month)->where('classic_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 3:
+                        if($remainingAllRace->where('race_months','<',$month)->where('senior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                }
+            }else{
+                switch($season){
+                    case 1:
+                        if($remainingAllRace->where('junior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 2:
+                        if($remainingAllRace->where('classic_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
+    //対象時期より後にレースが存在するか検証する関数
+    private function setRaceForward(array $registUmamusumeRaceArray ,array $prop){
+        $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3])->get();
+
+        $seasonArray = array();
+
+        for($s = $prop['season'] ; $s < 4 ; $s++){
+            $seasonArray[] = $s;
+        }
+
+        Log::info( $seasonArray);
+        foreach($seasonArray as $season){
+            $month = $prop['month'];
+            $half =  $prop['half'];
+            if($prop['season'] == $season){
+                if($half == '0'){
+                    switch($season){
+                        case 1:
+                            if($remainingAllRace->where('half_flag',1)->where('race_months',$month)->where('junior_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                        case 2:
+                            if($remainingAllRace->where('half_flag',1)->where('race_months',$month)->where('classic_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                        case 3:
+                            if($remainingAllRace->where('half_flag',1)->where('race_months',$month)->where('senior_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                    }
+                }
+                switch($season){
+                    case 1:
+                        if($remainingAllRace->where('race_months','>',$month)->where('junior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 2:
+                        if($remainingAllRace->where('race_months','>',$month)->where('classic_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 3:
+                        if($remainingAllRace->where('race_months','>',$month)->where('senior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                }
+            }else{
+                switch($season){
+                    case 2:
+                        if($remainingAllRace->where('classic_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 3:
+                        if($remainingAllRace->where('senior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                }
+            }
+        }
+        return false;
     }
 
     //対象のレースに対して出走した結果を残すAPI
