@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\UserPersonal;
 use App\Models\UserHistory;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,9 @@ use Carbon\Carbon;
 class UserPersonalController extends Controller
 {
     //ユーザーを登録するAPI
-    public function regist(Request $request)
+    // 引数
+    // 戻り値
+    public function regist( Request $request) : JsonResponse
     {
         try {
             $validated = $request->validate([
@@ -47,7 +50,7 @@ class UserPersonalController extends Controller
             $user->password = Hash::make($validated['password']);
             $user->email = $validated['email'];
             $user->phone_number = $validated['phone'];
-            $user->user_image = basename($userImage);
+            $user->user_image = basename(path: $userImage);
             $user->birthday = $validated['birthday'];
             $user->gender = $validated['gender'];
             $user->location = $validated['address'];
@@ -67,7 +70,9 @@ class UserPersonalController extends Controller
     }
 
     //ログインのためのAPI
-    public function login(Request $request) 
+    // 引数
+    // 戻り値
+    public function login( Request $request) : JsonResponse
     {
         $request->validate([
             'userName' => 'required|string',
@@ -76,7 +81,7 @@ class UserPersonalController extends Controller
 
         $user = UserPersonal::where('user_name', $request->userName)->first();
 
-        if(is_null($user)){
+        if(is_null(value: $user)){
             return response()->json(['message' => 'ユーザーが見つかりません。'], 401);
         }
 
@@ -113,9 +118,11 @@ class UserPersonalController extends Controller
     }
 
     //ログアウトのためのAPI
-    public function logout()
+    // 引数
+    // 戻り値
+    public function logout() : JsonResponse
     {
-        Auth::user()->tokens->each(function ($token) {
+        Auth::user()->tokens->each(function ($token): void {
             $token->delete();
         });
 
@@ -123,7 +130,9 @@ class UserPersonalController extends Controller
     }
 
     //ログイン中のユーザー情報を取得するAPI
-    public function getUserData()
+    // 引数
+    // 戻り値
+    public function getUserData() : JsonResponse
     {
         $user = Auth::user()->only([
             'user_name',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -15,7 +16,10 @@ use App\Models\RegistUmamusumeRace;
 class UmamusumeController extends Controller
 {
     //ユーザーが登録していない、ウマ娘情報を取得するAPI
-    public function registList(){
+    // 引数
+    // 戻り値 JsonResponse
+    public function registList() : JsonResponse
+    {
         $userId = Auth::user()->user_id;
 
         $registUmamusumeIds = RegistUmamusume::where('user_id', $userId)->pluck('umamusume_id')->toArray();
@@ -27,7 +31,10 @@ class UmamusumeController extends Controller
     }
 
     //ユーザーが選択した、ウマ娘のデータを登録するAPI
-    public function regist(Request $request){
+    // 引数
+    // 戻り値 JsonResponse
+    public function regist( Request $request) : JsonResponse
+    {
         $umamusumeId = $request->get('umamusumeId');
         $raceIdArray = $request->get('raceIdArray');
         $userId = Auth::user()->user_id;
@@ -61,7 +68,10 @@ class UmamusumeController extends Controller
     }
 
     //ユーザーが登録したウマ娘の情報を取得するAPI
-    public function userRegist(){
+    // 引数
+    // 戻り値 JsonResponse
+    public function userRegist() : JsonResponse
+    {
         $userId = Auth::user()->user_id;
 
         $registUmamusume = RegistUmamusume::where('user_id', $userId)->with('umamusume')->get();
@@ -70,7 +80,10 @@ class UmamusumeController extends Controller
     }
 
     //ユーザーが入力したファン数をユーザーが登録したウマ娘データに反映させるAPI
-    public function fanUp(Request $request){
+    // 引数
+    // 戻り値 JsonResponse
+    public function fanUp( Request $request) : JsonResponse
+    {
         $userId = Auth::user()->user_id;
         $umamusumeId = $request->json('umamusumeId');
         $fans = $request->json('fans');
