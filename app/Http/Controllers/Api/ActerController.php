@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use App\Models\UmamusumeActer;
 
 
@@ -11,14 +12,12 @@ class ActerController extends Controller
 {
  
     //声優のリストをデータベースから取得するAPI
-    public function acterList()
+    //引数 なし
+    //戻り値 JsonResponse
+    public function acterList() : JsonResponse
     {
         $acters = UmamusumeActer::with('Umamusume')
         ->orderBy('birthday','desc')->get();
-
-        if(is_null($acters)){
-            return response()->json(['data' => $acters]);
-        }
 
         return response()->json(['data' => $acters]);
     }

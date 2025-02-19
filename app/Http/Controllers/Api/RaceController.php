@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Models\Race;
 use App\Models\RegistUmamusume;
 use App\Models\RegistUmamusumeRace;
@@ -20,7 +21,9 @@ class RaceController extends Controller
     private Umamusume $selectUmamusume;
 
     //レースのリストをDBから取得するAPI
-    public function raceList()
+    //引数 なし
+    //戻り値 JsonResponse
+    public function raceList() : JsonResponse
     {
         $races = Race::orderByRaw("CASE
         WHEN junior_flag = 1 THEN 1
@@ -36,7 +39,9 @@ class RaceController extends Controller
     }
 
     //ウマ娘を登録する際のレース情報を加工してDBから取得するAPI
-    public function raceRegistList()
+    //引数 なし
+    //戻り値 JsonResponse
+    public function raceRegistList() : JsonResponse
     {
         $races = Race::whereIn('race_rank', [1, 2, 3])
         ->orderBy('race_rank', 'asc')
@@ -48,7 +53,10 @@ class RaceController extends Controller
     }
 
     //ユーザーが登録したウマ娘の未出走データを取得するAPI
-    public function remaining(){
+    //引数 なし
+    //戻り値 JsonResponse
+    public function remaining() : JsonResponse
+    {
         $userId = Auth::user()->user_id;
         $registUmamusumeArray = RegistUmamusume::where('user_id', $userId)->with('umamusume')->get();
 
@@ -57,9 +65,9 @@ class RaceController extends Controller
             $registUmamusumeRaceArray = RegistUmamusumeRace::where('user_id', $userId)
             ->where('umamusume_id',$registUmamusume->umamusume_id)->pluck('race_id')->toArray();
 
-            $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3]);
+            $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3])->get();
 
-            $isAllCrown = $remainingAllRace->doesntExist() ? true : false;
+            $isAllCrown = $remainingAllRace->count() == 0 ? true : false;
 
             $turfSprintRace = 0;
             $turfMileRace = 0;
@@ -70,13 +78,13 @@ class RaceController extends Controller
             $dirtClassicRace = 0;
 
             if(!$isAllCrown){
-                $turfSprintRace         = (clone $remainingAllRace)->where('race_state',0)->where('distance',1)->count();
-                $turfMileRace           = (clone $remainingAllRace)->where('race_state',0)->where('distance',2)->count();
-                $turfClassicRace        = (clone $remainingAllRace)->where('race_state',0)->where('distance',3)->count();
-                $turfLongDistanceRace   = (clone $remainingAllRace)->where('race_state',0)->where('distance',4)->count();
-                $dirtSprintDistanceRace = (clone $remainingAllRace)->where('race_state',1)->where('distance',1)->count();
-                $dirtMileRace           = (clone $remainingAllRace)->where('race_state',1)->where('distance',2)->count();
-                $dirtClassicRace        = (clone $remainingAllRace)->where('race_state',1)->where('distance',3)->count();
+                $turfSprintRace         = $remainingAllRace->where('race_state',0)->where('distance',1)->count();
+                $turfMileRace           = $remainingAllRace->where('race_state',0)->where('distance',2)->count();
+                $turfClassicRace        = $remainingAllRace->where('race_state',0)->where('distance',3)->count();
+                $turfLongDistanceRace   = $remainingAllRace->where('race_state',0)->where('distance',4)->count();
+                $dirtSprintDistanceRace = $remainingAllRace->where('race_state',1)->where('distance',1)->count();
+                $dirtMileRace           = $remainingAllRace->where('race_state',1)->where('distance',2)->count();
+                $dirtClassicRace        = $remainingAllRace->where('race_state',1)->where('distance',3)->count();
             }
             $result = [
                 "umamusume"             => $registUmamusume->umamusume,
@@ -97,9 +105,12 @@ class RaceController extends Controller
     }
 
     //シーズン、出走月、前後半
-    //また対象うウマ娘が出走していない
+    //また対象ウマ娘が出走していない
     //レースを取得するAPi
-    public function remainingToRace(Request $request){
+    //引数 Request
+    //戻り値 JsonResponse
+    public function remainingToRace( Request $request) : JsonResponse
+    {
         $userId = Auth::user()->user_id;
         $umamusumeId = $request->json('umamusumeId');
         $season = $request->json('season');
@@ -114,15 +125,11 @@ class RaceController extends Controller
         $registUmamusumeRaceArray = RegistUmamusumeRace::where('user_id', $userId)
         ->where('umamusume_id',$umamusumeId)->pluck('race_id')->toArray();
 
-        $race = $this->setRemainingRace($registUmamusumeRaceArray,$season,$month,$half);
-
-        if($season == 3 && $month == 12 && $half == 1){
-            return response()->json(['data' => $race,'Props' => $props]);
-        }
+        $race = $this->setRemainingRace( registUmamusumeRaceArray: $registUmamusumeRaceArray , season: $season , month: $month , half: $half );
 
         $loopCount = 0;
 
-        while ($race->isEmpty() && $loopCount < 2) {
+        while (is_null(value: $race) && $loopCount < 2) {
             $secondHalf   = $half == 1 ? 0 : 1;
             $secondMonth  = $month;
             $secondSeason = $season;
@@ -141,32 +148,185 @@ class RaceController extends Controller
             $props['month']  = $secondMonth;
             $props['half']   = $secondHalf;
 
-            $race = $this->setRemainingRace($registUmamusumeRaceArray, $secondSeason, $secondMonth, $secondHalf);
+            $race = $this->setRemainingRace( registUmamusumeRaceArray: $registUmamusumeRaceArray , season: $secondSeason , month: $secondMonth , half: $secondHalf );
             
             $loopCount++;
         }
+
+        $props['isRaceReturn'] = $this->setRaceReturn(registUmamusumeRaceArray: $registUmamusumeRaceArray,prop: $props);
+        $props['isRaceForward'] = $this->setRaceForward(registUmamusumeRaceArray: $registUmamusumeRaceArray,prop: $props);
 
         return response()->json(['data' => $race,'Props' => $props]);
     }
 
     //全体残レース、シーズン、出走月、前後半を引数としてレースを取得する関数
-    private function setRemainingRace(array $registUmamusumeRaceArray,int $season,int $month,int $half){
+    //引数1 registUmamusumeRaceArray 出走したレースId配列
+    //引数2 season 期
+    //引数3 month 出走月
+    //引数4 half 前後半
+    //戻り値 JsonResponse
+    private function setRemainingRace( array $registUmamusumeRaceArray, int $season, int $month, int $half) : array
+    {
         $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3]);
         switch($season){
             case 1:
                 return $remainingAllRace->where('half_flag',$half)->where('race_months',$month)->where('junior_flag',1)->get();
-            break;
             case 2:
                 return $remainingAllRace->where('half_flag',$half)->where('race_months',$month)->where('classic_flag',1)->get();
-            break;
             case 3:
                 return $remainingAllRace->where('half_flag',$half)->where('race_months',$month)->where('senior_flag',1)->get();
-            break;
         }
     }
 
+    //対象時期より前にレースが存在するか検証する関数
+    //引数1 registUmamusumeRaceArray 出走したレースId配列
+    //引数2 prop データを格納した配列
+    //戻り値 bool
+    private function setRaceReturn( array $registUmamusumeRaceArray, array $prop) : bool
+    {
+        $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3])->get();
+
+        $seasonArray = array();
+
+        for($s = $prop['season'] ; 0 < $s ; $s--){
+            $seasonArray[] = $s;
+        }
+
+        foreach($seasonArray as $season){
+            $month = $prop['month'];
+            $half =  $prop['half'];
+            if($prop['season'] == $season){
+                if($half == '1'){
+                    switch($season){
+                        case 1:
+                            if($remainingAllRace->where('half_flag',0)->where('race_months',$month)->where('junior_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                        case 2:
+                            if($remainingAllRace->where('half_flag',0)->where('race_months',$month)->where('classic_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                        case 3:
+                            if($remainingAllRace->where('half_flag',0)->where('race_months',$month)->where('senior_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                    }
+                }
+                switch($season){
+                    case 1:
+                        if($remainingAllRace->where('race_months','<',$month)->where('junior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 2:
+                        if($remainingAllRace->where('race_months','<',$month)->where('classic_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 3:
+                        if($remainingAllRace->where('race_months','<',$month)->where('senior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                }
+            }else{
+                switch($season){
+                    case 1:
+                        if($remainingAllRace->where('junior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 2:
+                        if($remainingAllRace->where('classic_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
+    //対象時期より後にレースが存在するか検証する関数
+    //引数1 registUmamusumeRaceArray 出走したレースId配列 
+    //引数2 prop データを格納した配列
+    //戻り値 bool
+    private function setRaceForward( array $registUmamusumeRaceArray, array $prop ) : bool
+    {
+        $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3])->get();
+
+        $seasonArray = array();
+
+        for($s = $prop['season'] ; $s < 4 ; $s++){
+            $seasonArray[] = $s;
+        }
+
+        foreach($seasonArray as $season){
+            $month = $prop['month'];
+            $half =  $prop['half'];
+            if($prop['season'] == $season){
+                if($half == '0'){
+                    switch($season){
+                        case 1:
+                            if($remainingAllRace->where('half_flag',1)->where('race_months',$month)->where('junior_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                        case 2:
+                            if($remainingAllRace->where('half_flag',1)->where('race_months',$month)->where('classic_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                        case 3:
+                            if($remainingAllRace->where('half_flag',1)->where('race_months',$month)->where('senior_flag',1)->count() > 0){
+                                return true;
+                            }
+                        break;
+                    }
+                }
+                switch($season){
+                    case 1:
+                        if($remainingAllRace->where('race_months','>',$month)->where('junior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 2:
+                        if($remainingAllRace->where('race_months','>',$month)->where('classic_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 3:
+                        if($remainingAllRace->where('race_months','>',$month)->where('senior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                }
+            }else{
+                switch($season){
+                    case 2:
+                        if($remainingAllRace->where('classic_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                    case 3:
+                        if($remainingAllRace->where('senior_flag',1)->count() > 0){
+                            return true;
+                        }
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
     //対象のレースに対して出走した結果を残すAPI
-    public function raceRun (Request $request){
+    //引数 Request
+    //戻り値 JsonResponse
+    public function raceRun ( Request $request) : JsonResponse
+    {
         $userId = Auth::user()->user_id;
         $umamusumeId = $request->json('umamusumeId');
         $raceId = $request->json('raceId');
@@ -188,7 +348,10 @@ class RaceController extends Controller
     }
 
     //対象ウマ娘の残レースと適性に合わせて推奨される因子とシナリオを取得するAPI
-    public function remainingPattern(Request $request){
+    //引数 Request
+    //戻り値 JsonResponse
+    public function remainingPattern( Request $request) : JsonResponse
+    {
         
         //一連の処理
         $userId = Auth::user()->user_id;
@@ -210,11 +373,11 @@ class RaceController extends Controller
 
         //まずシナリオレースの時期と重複するレースの存在の検証
         //TRUEであれば固有シナリオが存在するレースでは難しい………A
-        $IsExistScenarioFlag = $this->checkDuplicateScenarioRace($umamusumeId ,$remainingAllRaceCollections);
+        $IsExistScenarioFlag = $this->checkDuplicateScenarioRace(umamusumeId: $umamusumeId ,remainingAllRaceCollections: $remainingAllRaceCollections);
 
         //次にラークシナリオのレースの時期と重複するレースの存在の検証
         //TRUEであればラークシナリオである必要がない………B
-        $IsExistLarcFlag = $this->checkLarcScenario($remainingAllRaceCollections);
+        $IsExistLarcFlag = $this->checkLarcScenario(remainingAllRaceCollections: $remainingAllRaceCollections);
 
         $result = array();
 
@@ -231,13 +394,17 @@ class RaceController extends Controller
             }
         }
 
-        $result['requiredsFactor'] = $this->getRequiredsFactor($remainingAllRaceCollections);
+        $result['requiredsFactor'] = $this->getRequiredsFactor(remainingAllRaceCollections: $remainingAllRaceCollections);
 
         return response()->json(['data' => $result]);
     }
 
     //残レースに対象ウマ娘のシナリオと被るレースが存在するか検証する関数
-    private function checkDuplicateScenarioRace(int $umamusumeId ,object $remainingAllRaceCollections){
+    //引数 umamusumeId 対象ウマ娘Id
+    //引数 remainingAllRaceCollections 残レース配列
+    //戻り値 bool
+    private function checkDuplicateScenarioRace( int $umamusumeId, object $remainingAllRaceCollections) : bool
+    {
         $result = false;
         $scenarioRaceArray = ScenarioRace::where('umamusume_id', $umamusumeId)->get();
         foreach($scenarioRaceArray as $scenarioRaceItem){
@@ -275,7 +442,8 @@ class RaceController extends Controller
             $conditions['half_flag'] = $checkRace['half_flag'];
             $conditions['race_name'] = $checkRace['race_name'];
 
-            $result = $remainingAllRaceCollections->contains(function ($item) use ($conditions,$checkRace) {
+            $result = $remainingAllRaceCollections->contains(function ( $item) use ( $conditions, $checkRace) : bool 
+            {
                 foreach ($conditions as $key => $value) {
                     if ($item['race_name'] === $checkRace['race_name']) {
                         return false;
@@ -294,7 +462,9 @@ class RaceController extends Controller
     }
 
     //残レースのレースをバ場と距離に分割してランク付けする関数
-    private function getRankedRaceCounts(object $remainingAllRaceCollections)
+    //引数 remainingAllRaceCollections 残レース配列
+    //戻り値 array
+    private function getRankedRaceCounts( object $remainingAllRaceCollections) : array
     {
         $raceCounts = [
             '芝_短距離'        => ($remainingAllRaceCollections)->where('race_state', 0)->where('distance', 1)->count(),
@@ -306,13 +476,13 @@ class RaceController extends Controller
             'ダート_中距離'     => ($remainingAllRaceCollections)->where('race_state', 1)->where('distance', 3)->count(),
         ];
 
-        arsort($raceCounts);
+        arsort(array: $raceCounts);
 
         $rankedRaceCounts = [];
         $rank = 1;
 
         foreach ($raceCounts as $key => $count) {
-            list($raceType, $distance) = explode('_', $key);
+            list($raceType, $distance) = explode(separator: '_', string: $key);
     
             $rankedRaceCounts[] = [
                 'race_type' => $raceType,
@@ -329,17 +499,22 @@ class RaceController extends Controller
     }
 
     //対象の適性を引き上げるために必要な因子を計算する関数
-    private function setRequiredsFactor(string $aptitude,string $aptitudeType,array $array){
+    //引数1 aptitude 適性ランク
+    //引数2 aptitudeType 適性名 
+    //引数3 array 因子格納配列
+    //戻り値 array
+    private function setRequiredsFactor( string $aptitude, string $aptitudeType, array $array) : array
+    {
         switch($aptitude){
             case 'E':
-                if(count($array) == 6){
+                if(count(value: $array) == 6){
                     break;
                 }
                 $array[] = $aptitudeType;
             break;
             case 'F':
                 for($facter = 0 ; $facter < 2 ; $facter++){
-                    if(count($array) == 6){
+                    if(count(value: $array) == 6){
                         break;
                     }
                     $array[] = $aptitudeType;
@@ -347,7 +522,7 @@ class RaceController extends Controller
             break;
             case 'G':
                 for($facter = 0 ; $facter < 3 ; $facter++){
-                    if(count($array) == 6){
+                    if(count(value: $array) == 6){
                         break;
                     }
                     $array[] = $aptitudeType;
@@ -360,7 +535,10 @@ class RaceController extends Controller
     }
 
     //残レースでラークシナリオを走るべきレースがあるか検証する関数
-    private function checkLarcScenario(object $remainingAllRaceCollections){
+    //引数 remainingAllRaceCollections 残レース配列
+    //戻り値 bool
+    private function checkLarcScenario( object $remainingAllRaceCollections) : bool
+    {
         if($remainingAllRaceCollections->where("scenario_flag",1)->count() == 0){
             //以下条件に当てはまれば
             //日本ダービー条件
@@ -385,40 +563,43 @@ class RaceController extends Controller
     }
 
     //残レースから必要な因子情報を格納する関数
-    private function getRequiredsFactor(object $remainingAllRaceCollections){
-        $rankRace = $this->getRankedRaceCounts($remainingAllRaceCollections);
+    //引数 remainingAllRaceCollections 残レース配列
+    //戻り値 array
+    private function getRequiredsFactor( object $remainingAllRaceCollections) : array
+    {
+        $rankRace = $this->getRankedRaceCounts(remainingAllRaceCollections: $remainingAllRaceCollections);
 
         $requiredsFactor = array();
 
         for($i = 0 ; $i < 7 ; $i++){
             if($rankRace[$i]['race_type'] == '芝'){
-                $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->turf_aptitude,$rankRace[$i]['race_type'],$requiredsFactor);
+                $requiredsFactor = $this->setRequiredsFactor(aptitude: $this->selectUmamusume->turf_aptitude,aptitudeType: $rankRace[$i]['race_type'],array: $requiredsFactor);
             }else{
-                $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->dirt_aptitude,$rankRace[$i]['race_type'],$requiredsFactor);
+                $requiredsFactor = $this->setRequiredsFactor(aptitude: $this->selectUmamusume->dirt_aptitude,aptitudeType: $rankRace[$i]['race_type'],array: $requiredsFactor);
             }
-            if(count($requiredsFactor) == 6){
+            if(count(value: $requiredsFactor) == 6){
                 break;
             }
     
             switch($rankRace[$i]['distance']){
                 case '短距離':
-                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->sprint_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                    $requiredsFactor = $this->setRequiredsFactor(aptitude: $this->selectUmamusume->sprint_aptitude,aptitudeType: $rankRace[$i]['distance'],array: $requiredsFactor);
                 break;
                 case 'マイル':
-                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->mile_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                    $requiredsFactor = $this->setRequiredsFactor(aptitude: $this->selectUmamusume->mile_aptitude,aptitudeType: $rankRace[$i]['distance'],array: $requiredsFactor);
                 break;
                 case '中距離':
-                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->classic_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                    $requiredsFactor = $this->setRequiredsFactor(aptitude: $this->selectUmamusume->classic_aptitude,aptitudeType: $rankRace[$i]['distance'],array: $requiredsFactor);
                 break;
                 case '長距離':
-                    $requiredsFactor = $this->setRequiredsFactor($this->selectUmamusume->long_distance_aptitude,$rankRace[$i]['distance'],$requiredsFactor);
+                    $requiredsFactor = $this->setRequiredsFactor(aptitude: $this->selectUmamusume->long_distance_aptitude,aptitudeType: $rankRace[$i]['distance'],array: $requiredsFactor);
                 break;
             }
-            if(count($requiredsFactor) == 6){
+            if(count(value: $requiredsFactor) == 6){
                 break;
             }
         }
-        sort($requiredsFactor); 
+        sort(array: $requiredsFactor); 
         return $requiredsFactor;
     }
 }
