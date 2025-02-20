@@ -5,7 +5,7 @@ import { RemainingRaceListManualProps } from '../../interface/props';
 import { RemainingRaceListManualHeader } from './remainingRaceListManualHeader';
 
 //レース出走画面
-export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = ({ umamusume , onReturn }) => {
+export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = ({ umamusume , token, onReturn }) => {
     
     //選択しているシーズン ※初期はジュニアのため1
     const [ selectedSeason, setSelectedSeason ] = useState(1);
@@ -30,9 +30,6 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
     
     //選択ウマ娘情報
     const [selectUmamsume,setSelectUmamsume] = useState(umamusume);
-    
-    //トークン情報
-    const token = localStorage.getItem('auth_token');
 
     //オートモードチェック処理
     const handleAutoModeChange = () => {
@@ -77,7 +74,7 @@ export const RemainingRaceListManual : React.FC<RemainingRaceListManualProps> = 
               headers: {
                 "Authorization": `Bearer ${token}`,
               },
-              body: JSON.stringify({season:selectedSeason,month:selectedMonth,half:selectedHalf,umamusumeId:selectUmamsume.umamusume_id}),
+              body: JSON.stringify({season:selectedSeason,month:selectedMonth,half:selectedHalf,umamusumeId:selectUmamsume?.umamusume_id}),
             });
             const responseJson = await response.json();
             const data :Race[] = responseJson.data;

@@ -4,9 +4,10 @@ import { LiveListHeader } from './liveListHeader';
 import { LiveListData } from './liveListData';
 import { LiveListCharacterHeader } from './liveListCharacterHeader';
 import { LiveListCharacterData } from './liveListCharacterData';
+import { LiveListProps } from '../../interface/props';
 
 //ライブ情報表示画面
-export const LiveList = () => {
+export const LiveList : React.FC<LiveListProps> = ({token}) => {
 
     //ライブ情報を格納する配列
     const [lives, setLives] = useState<Live[]>([]);
@@ -22,9 +23,6 @@ export const LiveList = () => {
     
     //ライブを選択している状態
     const [isCharacter,setIsCharacter] = useState(false);
-    
-    //トークン情報
-    const token = localStorage.getItem('auth_token');
 
     //ライブを選択した処理
     const onClick = (live : Live) =>{

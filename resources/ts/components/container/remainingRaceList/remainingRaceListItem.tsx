@@ -2,7 +2,7 @@ import React from 'react';
 import { RemainingRaceListItemProps } from '../../interface/props';
 
 //残レース情報表示画面のレコード情報
-export const RemainingRaceListItem : React.FC<RemainingRaceListItemProps> = ({ race , runRace }) => {
+export const RemainingRaceListItem : React.FC<RemainingRaceListItemProps> = ({ race, runRace}) => {
 
     let raceDistance = "";
 
