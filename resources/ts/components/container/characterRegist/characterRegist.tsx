@@ -3,9 +3,10 @@ import { Race , Umamusume } from '../../interface/interface';
 import { CharacterRegistHeader } from './characterRegistHeader';
 import { CharacterRegistData } from './characterRegistData';
 import { Aptitude } from './aptitude';
+import { CharacterRegistProps } from '../../interface/props';
 
 //ウマ娘登録画面
-export const CharacterRegist = () => {
+export const CharacterRegist : React.FC<CharacterRegistProps> = ({token}) => {
 
     //レース情報を格納する配列
     const [races, setRaces] = useState<Race[]>([]);
@@ -21,9 +22,6 @@ export const CharacterRegist = () => {
 
     //変更後のファン数を格納
     const [fans, setFans] = useState<number>(0);
-    
-    //トークン
-    const token = localStorage.getItem('auth_token');
 
     useEffect(() => {
       fetchRaces();

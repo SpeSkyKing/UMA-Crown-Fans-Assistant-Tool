@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Common\UmamusumeLog;
 use App\Models\Race;
 use App\Models\RegistUmamusume;
 use App\Models\RegistUmamusumeRace;
 use App\Models\Umamusume;
 use App\Models\ScenarioRace;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 //レース関連のデータを取得するコントローラー
@@ -20,11 +20,26 @@ class RaceController extends Controller
     //ユーザーが選択したウマ娘のオブジェクトを格納する変数
     private Umamusume $selectUmamusume;
 
+    //ログ記載用オブジェクト
+    private UmamusumeLog $umamusumeLoger;
+
+    //ログ属性用変数
+    private string $logAttribute; 
+    
+    public function __construct()
+    {
+        $this->umamusumeLoger = new UmamusumeLog();
+    }
+
     //レースのリストをDBから取得するAPI
     //引数 なし
     //戻り値 JsonResponse
     public function raceList() : JsonResponse
     {
+        $this->logAttribute = 'raceList';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+
         $races = Race::orderByRaw("CASE
         WHEN junior_flag = 1 THEN 1
         WHEN classic_flag = 1 THEN 2
@@ -35,6 +50,8 @@ class RaceController extends Controller
         ->orderBy('race_rank', 'asc')
         ->get();
 
+        $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
+
         return response()->json(['data' => $races]);
     }
 
@@ -43,11 +60,17 @@ class RaceController extends Controller
     //戻り値 JsonResponse
     public function raceRegistList() : JsonResponse
     {
+        $this->logAttribute = 'raceRegistList';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+
         $races = Race::whereIn('race_rank', [1, 2, 3])
         ->orderBy('race_rank', 'asc')
         ->orderBy('race_months', 'asc')
         ->orderBy('half_flag', 'asc')
         ->get();
+
+        $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
 
         return response()->json(['data' => $races]);
     }
@@ -57,6 +80,10 @@ class RaceController extends Controller
     //戻り値 JsonResponse
     public function remaining() : JsonResponse
     {
+        $this->logAttribute = 'remaining';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+
         $userId = Auth::user()->user_id;
         $registUmamusumeArray = RegistUmamusume::where('user_id', $userId)->with('umamusume')->get();
 
@@ -101,6 +128,9 @@ class RaceController extends Controller
 
             $results[] = $result;
         }
+
+        $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
+
         return response()->json(['data' => $results]);
     }
 
@@ -111,6 +141,10 @@ class RaceController extends Controller
     //戻り値 JsonResponse
     public function remainingToRace( Request $request) : JsonResponse
     {
+        $this->logAttribute = 'remainingToRace';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+        
         $userId = Auth::user()->user_id;
         $umamusumeId = $request->json('umamusumeId');
         $season = $request->json('season');
@@ -156,6 +190,8 @@ class RaceController extends Controller
         $props['isRaceReturn'] = $this->setRaceReturn(registUmamusumeRaceArray: $registUmamusumeRaceArray,prop: $props);
         $props['isRaceForward'] = $this->setRaceForward(registUmamusumeRaceArray: $registUmamusumeRaceArray,prop: $props);
 
+        $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
+
         return response()->json(['data' => $race,'Props' => $props]);
     }
 
@@ -167,6 +203,8 @@ class RaceController extends Controller
     //戻り値 JsonResponse
     private function setRemainingRace( array $registUmamusumeRaceArray, int $season, int $month, int $half) : array
     {
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: 'setRemainingRace');
+
         $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3]);
         switch($season){
             case 1:
@@ -184,6 +222,8 @@ class RaceController extends Controller
     //戻り値 bool
     private function setRaceReturn( array $registUmamusumeRaceArray, array $prop) : bool
     {
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: 'setRaceReturn');
+
         $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3])->get();
 
         $seasonArray = array();
@@ -256,6 +296,8 @@ class RaceController extends Controller
     //戻り値 bool
     private function setRaceForward( array $registUmamusumeRaceArray, array $prop ) : bool
     {
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: 'setRaceForward');
+
         $remainingAllRace = Race::whereNotIn('race_id',$registUmamusumeRaceArray)->whereIn('race_rank',[1,2,3])->get();
 
         $seasonArray = array();
@@ -327,6 +369,10 @@ class RaceController extends Controller
     //戻り値 JsonResponse
     public function raceRun ( Request $request) : JsonResponse
     {
+        $this->logAttribute = 'raceRun';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+        
         $userId = Auth::user()->user_id;
         $umamusumeId = $request->json('umamusumeId');
         $raceId = $request->json('raceId');
@@ -342,6 +388,8 @@ class RaceController extends Controller
             return response()->json(['error' => 'ウマ娘出走エラー'], 500);
         }
 
+        $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
+
         return response()->json([
             'message' => '出走完了'
         ], 201);
@@ -352,13 +400,17 @@ class RaceController extends Controller
     //戻り値 JsonResponse
     public function remainingPattern( Request $request) : JsonResponse
     {
-        
+        $this->logAttribute = 'remainingPattern';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+
         //一連の処理
         $userId = Auth::user()->user_id;
 
         $umamusumeId = $request->json('umamusumeId');
 
         if(is_null($umamusumeId)){
+            $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
             return response()->json(['error' => 'ウマ娘出走エラー'], 500);
         }
 
@@ -396,6 +448,8 @@ class RaceController extends Controller
 
         $result['requiredsFactor'] = $this->getRequiredsFactor(remainingAllRaceCollections: $remainingAllRaceCollections);
 
+        $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
+
         return response()->json(['data' => $result]);
     }
 
@@ -405,11 +459,18 @@ class RaceController extends Controller
     //戻り値 bool
     private function checkDuplicateScenarioRace( int $umamusumeId, object $remainingAllRaceCollections) : bool
     {
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: 'checkDuplicateScenarioRace');
+
         $result = false;
+
         $scenarioRaceArray = ScenarioRace::where('umamusume_id', $umamusumeId)->get();
+
         foreach($scenarioRaceArray as $scenarioRaceItem){
+
             $checkRace = Race::where('race_id',$scenarioRaceItem['race_id'])->first();
+
             $seniorFlag = $classicFlag = $juniorFlag = null;
+            
             if(is_null($scenarioRaceItem['senior_flag'])){
                 $seniorFlag  = $checkRace->senior_flag  ? $checkRace->senior_flag  : 'all';
                 $classicFlag = $checkRace->classic_flag ? $checkRace->classic_flag : 'all';
@@ -466,6 +527,8 @@ class RaceController extends Controller
     //戻り値 array
     private function getRankedRaceCounts( object $remainingAllRaceCollections) : array
     {
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: 'getRankedRaceCounts');
+
         $raceCounts = [
             '芝_短距離'        => ($remainingAllRaceCollections)->where('race_state', 0)->where('distance', 1)->count(),
             '芝_マイル'        => ($remainingAllRaceCollections)->where('race_state', 0)->where('distance', 2)->count(),
@@ -505,6 +568,8 @@ class RaceController extends Controller
     //戻り値 array
     private function setRequiredsFactor( string $aptitude, string $aptitudeType, array $array) : array
     {
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: 'setRequiredsFactor');
+
         switch($aptitude){
             case 'E':
                 if(count(value: $array) == 6){
@@ -539,6 +604,8 @@ class RaceController extends Controller
     //戻り値 bool
     private function checkLarcScenario( object $remainingAllRaceCollections) : bool
     {
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: 'checkLarcScenario');
+
         if($remainingAllRaceCollections->where("scenario_flag",1)->count() == 0){
             //以下条件に当てはまれば
             //日本ダービー条件
@@ -567,6 +634,8 @@ class RaceController extends Controller
     //戻り値 array
     private function getRequiredsFactor( object $remainingAllRaceCollections) : array
     {
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: 'getRequiredsFactor');
+
         $rankRace = $this->getRankedRaceCounts(remainingAllRaceCollections: $remainingAllRaceCollections);
 
         $requiredsFactor = array();

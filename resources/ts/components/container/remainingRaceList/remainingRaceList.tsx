@@ -3,9 +3,10 @@ import { Umamusume , RemainingRace , RaceEntryPattern } from '../../interface/in
 import { RemainingRaceListHeader } from './remainingRaceListHeader';
 import { RemainingRaceListData } from './remainingRaceListData';
 import { RemainingRaceListManual } from "./remainingRaceListManual";
+import { RemainingRaceListProps } from '../../interface/props';
 
 //残レース情報表示画面
-export const RemainingRaceList = () => {
+export const RemainingRaceList : React.FC<RemainingRaceListProps> = ({token})  => {
     
     //残レース情報を格納する配列
     const [ remainingRaces, setRemainingRaces ] = useState<RemainingRace[]>([]);
@@ -24,9 +25,6 @@ export const RemainingRaceList = () => {
     
     //レース出走処理画面の表示有無
     const [ isManualRaces , setIsManualRaces ] = useState(false);
-    
-    //トークン情報
-    const token = localStorage.getItem('auth_token');
 
     //残レース情報を取得する
     const fetchRaces = async () => {
@@ -97,7 +95,7 @@ export const RemainingRaceList = () => {
     }
     
     if (isManualRaces) {
-      return <RemainingRaceListManual umamusume={selectUmamusume} onReturn={returnCheckRaces}></RemainingRaceListManual>
+      return <RemainingRaceListManual umamusume={selectUmamusume} token={token} onReturn={returnCheckRaces}></RemainingRaceListManual>
     }
 
     if (isCheckRace){

@@ -3,9 +3,9 @@ import { CharacterListFans } from './characterListFans';
 import { CharacterListHeader } from './characterListHeader';
 import { CharacterListData } from './characterListData';
 import { RegistUmamusume } from '../../interface/interface';
-
+import { CharacterListProps } from '../../interface/props';
 //ウマ娘情報表示画面
-export const CharacterList = () => {
+export const CharacterList : React.FC<CharacterListProps> = ({token}) => {
       //ウマ娘の情報を格納するリスト
       const [registUmamusumes, setRegistUmamusume] = useState<RegistUmamusume[]>([]);
       
@@ -20,9 +20,6 @@ export const CharacterList = () => {
 
       //ファン数入力画面の表示有無を設定する
       const [fanDisplay,isFanDisplay] = useState(false);
-
-      //トークン情報を格納する
-      const token = localStorage.getItem('auth_token');
       
       //非同期でウマ娘の情報取得処理を実行する
       useEffect(() => {

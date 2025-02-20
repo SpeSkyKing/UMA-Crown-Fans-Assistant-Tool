@@ -6,6 +6,7 @@ use App\Models\UserPersonal;
 use App\Models\UserHistory;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Common\UmamusumeLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -16,11 +17,26 @@ use Carbon\Carbon;
 //レース関連のデータを取得するコントローラー
 class UserPersonalController extends Controller
 {
+    //ログ記載用オブジェクト
+    private UmamusumeLog $umamusumeLoger;
+    
+    //ログ属性用変数
+    private string $logAttribute; 
+
+    public function __construct()
+    {
+        $this->umamusumeLoger = new UmamusumeLog();
+    }
+
     //ユーザーを登録するAPI
-    // 引数
-    // 戻り値
+    // 引数 Request
+    // 戻り値 JsonResponse
     public function regist( Request $request) : JsonResponse
     {
+        $this->logAttribute = 'regist';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+
         try {
             $validated = $request->validate([
                 'userName' => ['required', 'string'],
@@ -39,6 +55,7 @@ class UserPersonalController extends Controller
         }
 
         $userImage = null;
+
         if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
             $userImage = $request->file('avatar')->storeAs('image/userImage', $request->file('avatar')->hashName(), 'public');
         }
@@ -60,8 +77,11 @@ class UserPersonalController extends Controller
             $user->save();
         } catch (\Exception $e) {
             Log::error('ユーザー登録エラー:', $e->getMessage());
+            $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
             return response()->json(['error' => 'ユーザー登録エラー'], 500);
         }
+
+        $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
 
         return response()->json([
             'message' => 'ユーザーが登録されました。',
@@ -70,10 +90,14 @@ class UserPersonalController extends Controller
     }
 
     //ログインのためのAPI
-    // 引数
-    // 戻り値
+    // 引数 Request
+    // 戻り値 JsonResponse
     public function login( Request $request) : JsonResponse
     {
+        $this->logAttribute = 'login';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+
         $request->validate([
             'userName' => 'required|string',
             'password' => 'required|string',
@@ -105,35 +129,49 @@ class UserPersonalController extends Controller
                 $userHistory->save();
             } catch (\Exception $e) {
                 Log::error('ユーザー履歴登録エラー:',['error_message' => $e->getMessage()] );
+                $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
                 return response()->json(['error' => 'ユーザー履歴登録エラー'], 500);
             }
+
+            $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
 
             return response()->json([
                 'message' => 'ログイン成功',
                 'token' => $token,
             ], 200);
         }else{
+            $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
             return response()->json(['message' => 'パスワードが違います。'], 401);
         }
     }
 
     //ログアウトのためのAPI
     // 引数
-    // 戻り値
+    // 戻り値 JsonResponse
     public function logout() : JsonResponse
     {
+        $this->logAttribute = 'logout';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+
         Auth::user()->tokens->each(function ($token): void {
             $token->delete();
         });
+
+        $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
 
         return response()->json(['message' => 'ログアウトしました']);
     }
 
     //ログイン中のユーザー情報を取得するAPI
     // 引数
-    // 戻り値
+    // 戻り値 JsonResponse
     public function getUserData() : JsonResponse
     {
+        $this->logAttribute = 'getUserData';
+
+        $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
+
         $user = Auth::user()->only([
             'user_name',
             'email',
@@ -150,6 +188,8 @@ class UserPersonalController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
+
+        $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
 
         return response()->json(['data' => $user]);
     }

@@ -6,7 +6,8 @@ import { Umamusume , Race , Live , Acter , RemainingRace , RegistUmamusume } fro
 
 //content.tsxで利用する
 export interface ContentProps {
-    selectedContent:string;
+    selectedContent: string;
+    token: string | null;
 }
 
 //Sidebar.tsxで利用する
@@ -92,6 +93,12 @@ export interface TdItemProps {
  * characterRegist Start
  */
 
+//CharacterRegist.tsxで利用する
+export interface CharacterRegistProps {
+    token: string | null;
+}
+
+
 //aptitude.tsxで利用する
 export interface AptitudeProps {
     name: string;
@@ -115,6 +122,11 @@ export interface CharacterRegistDataProps {
 /*
  * characterList Start
  */
+
+//CharacterList.tsxで利用する
+export interface CharacterListProps {
+    token: string | null;
+}
 
 //characterListData.tsxで利用する
 export interface CharacterListDataProps {
@@ -155,6 +167,11 @@ export interface RaceListDataProps {
  * remainingRaceList Start
  */
 
+//RemainingRaceList.tsxで利用する
+export interface RemainingRaceListProps {
+    token: string | null;
+}
+
 //remainingRaceListData.tsxで利用する
 export interface RemainingRaceListDataProps {
     remainingRace: RemainingRace;
@@ -169,7 +186,8 @@ export interface RemainingRaceListItemProps {
 
 //remainingRaceListManual.tsxで利用する
 export interface RemainingRaceListManualProps {
-    umamusume: Umamusume ;
+    umamusume: Umamusume | undefined;
+    token: string | null;
     onReturn: () => void;
 }
 
@@ -197,6 +215,11 @@ export interface ActerListDataProps {
 /*
  * liveList Start
  */
+
+//LiveList.tsxで利用する
+export interface LiveListProps {
+    token: string | null;
+}
 
 //liveListData.tsxで利用する
 export interface LiveListDataProps {

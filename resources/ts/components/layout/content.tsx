@@ -8,15 +8,15 @@ import { ActerList } from '../container/acterList/acterList';
 import { ContentProps } from '../interface/props';
 
 //コンテンツ情報
-export const Content :React.FC<ContentProps> = ({ selectedContent }) => {
+export const Content :React.FC<ContentProps> = ({ selectedContent, token}) => {
     switch(selectedContent){
         case 'characterRegist':
             return (
-                <CharacterRegist></CharacterRegist>
+                <CharacterRegist token={token}></CharacterRegist>
             );
         case 'characterList':
             return (
-                <CharacterList></CharacterList>
+                <CharacterList token={token}></CharacterList>
             );
         case 'raceList':
             return (
@@ -24,11 +24,11 @@ export const Content :React.FC<ContentProps> = ({ selectedContent }) => {
             );
         case 'remainingRaceList':
             return (
-                <RemainingRaceList></RemainingRaceList>
+                <RemainingRaceList token={token}></RemainingRaceList>
             );
         case 'liveList':
             return (
-                <LiveList></LiveList>
+                <LiveList token={token}></LiveList>
             );
         case 'acterList':
             return (
