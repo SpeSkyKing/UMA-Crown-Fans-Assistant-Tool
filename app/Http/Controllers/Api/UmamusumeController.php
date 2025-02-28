@@ -78,9 +78,8 @@ class UmamusumeController extends Controller
                     $registUmamusumeRace->save();
                 }
             }
-            Log::info($userName.'に登録しました。');
         }catch (\Exception $e) {
-            Log::error('ウマ娘登録エラー:', $e->getMessage());
+            $this->umamusumeLoger->logwrite(msg: 'error',attribute:$this->logAttribute.':'.$e);
             $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
             return response()->json(['error' => 'ウマ娘登録エラー'], 500);
         }

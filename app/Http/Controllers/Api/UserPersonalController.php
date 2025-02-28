@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Common\UmamusumeLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Jenssegers\Agent\Agent;
 use Carbon\Carbon;
@@ -50,7 +49,7 @@ class UserPersonalController extends Controller
                 'role' => ['required','in:0,1'],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('バリデーションエラー:', $e->errors());
+            $this->umamusumeLoger->logwrite(msg: 'error',attribute:$this->logAttribute.':'.$e);
             return response()->json(['errors' => $e->errors()], 400);
         }
 
@@ -76,7 +75,7 @@ class UserPersonalController extends Controller
             $user->role = $validated['role'];
             $user->save();
         } catch (\Exception $e) {
-            Log::error('ユーザー登録エラー:', $e->getMessage());
+            $this->umamusumeLoger->logwrite(msg: 'error',attribute:$this->logAttribute.':'.$e);
             $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
             return response()->json(['error' => 'ユーザー登録エラー'], 500);
         }
@@ -128,7 +127,7 @@ class UserPersonalController extends Controller
                 
                 $userHistory->save();
             } catch (\Exception $e) {
-                Log::error('ユーザー履歴登録エラー:',['error_message' => $e->getMessage()] );
+                $this->umamusumeLoger->logwrite(msg: 'error',attribute:$this->logAttribute.':'.$e);
                 $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
                 return response()->json(['error' => 'ユーザー履歴登録エラー'], 500);
             }

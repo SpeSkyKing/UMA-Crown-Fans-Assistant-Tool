@@ -14,6 +14,9 @@ class UmamusumeLog extends Log
             case 'end':
                 $this->logEnd(attribute: $attribute);
                 break;
+            case 'error':
+                $this->logError(attribute: $attribute);
+                break;
             default:
                 throw new \Exception(message: "msgの値に問題があります。");
         }
@@ -27,5 +30,10 @@ class UmamusumeLog extends Log
     //処理終了のログを記載する
     private function logEnd(string $attribute): void{
         UmamusumeLog::info($attribute.'の処理を終了します。');
+    }
+
+    //エラーログを記載する
+    private function logError(string $attribute): void{
+        UmamusumeLog::error($attribute.'に失敗しました。');
     }
 }
