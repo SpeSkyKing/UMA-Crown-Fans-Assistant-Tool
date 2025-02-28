@@ -384,7 +384,7 @@ class RaceController extends Controller
             $registUmamusumeRace->regist_date = Carbon::now();
             $registUmamusumeRace->save();
         }catch (\Exception $e) {
-            Log::error('ウマ娘出走エラー:', $e->getMessage());
+            $this->umamusumeLoger->logwrite(msg: 'error',attribute:$this->logAttribute.':'.$e);
             return response()->json(['error' => 'ウマ娘出走エラー'], 500);
         }
 
