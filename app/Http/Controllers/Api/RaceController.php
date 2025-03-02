@@ -32,27 +32,38 @@ class RaceController extends Controller
     }
 
     //レースのリストをDBから取得するAPI
-    //引数 なし
+    //引数 Request
     //戻り値 JsonResponse
-    public function raceList() : JsonResponse
+    public function raceList( Request $request) : JsonResponse
     {
         $this->logAttribute = 'raceList';
 
         $this->umamusumeLoger->logwrite(msg: 'start',attribute: $this->logAttribute);
 
-        $races = Race::orderByRaw("CASE
+        $allRaces = Race::orderByRaw("CASE
         WHEN junior_flag = 1 THEN 1
         WHEN classic_flag = 1 THEN 2
         WHEN senior_flag = 1 THEN 3
         ELSE 4 END")
         ->orderBy('race_months', 'asc') 
         ->orderBy('half_flag', 'asc')
-        ->orderBy('race_rank', 'asc')
-        ->get();
+        ->orderBy('race_rank', 'asc');
+
+        $state = $request->json('state');
+
+        if($state != -1){
+            $allRaces->where('race_state',$state);
+        }
+
+        $distance = $request->json('distance');
+
+        if($distance != -1){
+            $allRaces->where('distance',$distance);
+        }
 
         $this->umamusumeLoger->logwrite(msg: 'end',attribute: $this->logAttribute);
 
-        return response()->json(['data' => $races]);
+        return response()->json(['data' => $allRaces->get()]);
     }
 
     //ウマ娘を登録する際のレース情報を加工してDBから取得するAPI

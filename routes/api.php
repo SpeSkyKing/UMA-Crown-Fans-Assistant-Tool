@@ -14,7 +14,7 @@ Route::get('/user', function (Request $request) {
 
 Route::prefix('race')->group(function () {
     Route::apiResource('list', RaceController::class);
-    Route::get('list', [RaceController::class, 'raceList']);
+    Route::post('list', [RaceController::class, 'raceList']);
     Route::apiResource('registList', RaceController::class);
     Route::get('registList', [RaceController::class, 'raceRegistList']);
     Route::middleware('auth:sanctum')->get('remaining', [RaceController::class, 'remaining']);
