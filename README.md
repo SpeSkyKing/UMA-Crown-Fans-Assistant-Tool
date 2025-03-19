@@ -158,6 +158,14 @@ erDiagram
         int umamusume_id PK
         int live_id PK
     }
+
+  USER_JEWEL_TABLE {
+        int user_id PK
+        int year PK
+        int month PK
+        int day PK
+        int jewel_amount
+    }
     
     %% リレーションシップ
     UMAMUSUME_TABLE ||--|| UMAMUSUME_ACTER_TABLE :""
@@ -171,3 +179,4 @@ erDiagram
     USER_TABLE ||--o{ USER_HISTORY_TABLE :""
     UMAMUSUME_TABLE ||--o{ VOCAL_UMAMUSE_TABLE :""
     LIVE_TABLE ||--o{ VOCAL_UMAMUSE_TABLE :""
+　　USER_TABLE ||--o{ USER_JEWEL_TABLE :""
