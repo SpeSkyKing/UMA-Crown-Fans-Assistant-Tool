@@ -179,3 +179,17 @@ export interface Acter{
     //ウマ娘オブジェクト
     umamusume:Umamusume;
 }
+
+//ジュエル情報用インターフェース
+export interface Jewel{
+    //主キー
+    user_id:number;
+    //年
+    year:number; 
+    //月
+    month:number;
+    //日
+    day:number;
+    //ジュエル数
+    jewel_amount:number;
+}

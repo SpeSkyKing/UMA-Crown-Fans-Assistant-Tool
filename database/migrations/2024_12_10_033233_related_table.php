@@ -143,6 +143,22 @@ return new class extends Migration
             //複合主キー
             $table->primary(['umamusume_id','live_id']);
         });
+
+        //ユーザー所有ジュエルテーブル
+        Schema::create('user_jewel_table', function (Blueprint $table) {
+            // 主キー
+            $table->integer('user_id');
+            // 主キー
+            $table->integer('year');
+            // 主キー
+            $table->integer('month');
+            // 主キー
+            $table->integer('day');
+            // 所有ジュエル数
+            $table->integer('jewel_amount');
+            // 複合主キー
+            $table->primary(['user_id', 'year', 'month', 'day']);
+        });
     }
 
     public function down(): void

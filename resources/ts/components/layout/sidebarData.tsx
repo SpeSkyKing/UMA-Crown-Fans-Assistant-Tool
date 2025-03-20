@@ -5,5 +5,6 @@ export const sidebarComponents = [
     { id: 3, name: 'レース情報表示', url: 'raceList',img:'KingHalo.png'},
     { id: 4, name: '残レース情報表示', url: 'remainingRaceList',img:'GrassWonder.png'},
     { id: 5, name: 'ライブ情報表示', url: 'liveList',img:'ElCondorPasa.png'},
-    { id: 6, name: '声優情報表示', url: 'acterList',img:'TsurumaruTsuyoshi.png'}
+    { id: 6, name: '声優情報表示', url: 'acterList',img:'TsurumaruTsuyoshi.png'},
+    { id: 7, name: 'ジュエル管理', url: 'jewelController',img:''}
 ];
