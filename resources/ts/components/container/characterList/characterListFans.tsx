@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ReservedRace } from "../../interface/interface";
 
 //ファン数変動画面
-export const CharacterListFans : React.FC<CharacterListFansProps>  = ({ selectUmamusume , countUp , returnAddFan , returnOnReturn }) => {
+export const CharacterListFans : React.FC<CharacterListFansProps>  = ({ selectUmamusume , countUp , returnAddFan , returnOnReturn , returnFanCalculation }) => {
 
   //ファン数計算処理のレースを格納する
   const [reservedRace,SetReservedRace] = useState<ReservedRace[]>([]);
@@ -22,6 +22,11 @@ export const CharacterListFans : React.FC<CharacterListFansProps>  = ({ selectUm
   const onReturn = () => {
     returnOnReturn();
   } 
+
+  //ファン計算画面表示
+  const FanCalculation = () =>{
+    returnFanCalculation();
+  }
 
 
   //Todo ファン効率計算処理の追加
@@ -67,7 +72,7 @@ export const CharacterListFans : React.FC<CharacterListFansProps>  = ({ selectUm
               <div className="mt-4">
                 <button
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg text-xl transition-all duration-300 ease-in-out transform hover:scale-105 w-full"
-                  onClick={onReturn}
+                  onClick={FanCalculation}
                 >
                   ファン効率計算処理
                 </button>
