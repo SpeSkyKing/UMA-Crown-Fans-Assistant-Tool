@@ -138,6 +138,7 @@ return new class extends Migration
         Schema::dropIfExists('umamusume_acter_table');
         Schema::dropIfExists('scenario_race_table');
         Schema::dropIfExists('vocal_umamusume_table');
+        Schema::dropIfExists('user_jewel_table');
 
         //マスタテーブルを削除する
         Schema::dropIfExists('umamusume_table');

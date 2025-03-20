@@ -1,4 +1,4 @@
-import { Umamusume , Race , Live , Acter , RemainingRace , RegistUmamusume } from './interface';
+import { Umamusume , Race , Live , Acter , RemainingRace , RegistUmamusume , Jewel} from './interface';
 
 /*
  * layout Start
@@ -140,6 +140,7 @@ export interface CharacterListFansProps {
     countUp        : (fan:number) => void;
     returnAddFan   : () => void;
     returnOnReturn : () => void;
+    returnFanCalculation : () => void;
 }
 
 /*
@@ -234,4 +235,22 @@ export interface LiveListCharacterDataProps{
 
 /*
  * liveList End
+ */
+
+/*
+ * jewelController Start
+ */
+
+//JewelController.tsxで利用する
+export interface JewelControllerProps {
+    token: string | null;
+}
+
+//JewelControllerData.tsxで利用する
+export interface JewelControllerDataProps {
+    jewel: Jewel;
+}
+
+/*
+ * jewelController End
  */

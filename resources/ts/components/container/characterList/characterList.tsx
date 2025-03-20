@@ -20,6 +20,9 @@ export const CharacterList : React.FC<CharacterListProps> = ({token}) => {
 
       //ファン数入力画面の表示有無を設定する
       const [fanDisplay,isFanDisplay] = useState(false);
+
+      //ファン数入力画面の表示有無を設定する
+      const [fanCalculationDisplay,isFanCalculationDisplay] = useState(false);
       
       //非同期でウマ娘の情報取得処理を実行する
       useEffect(() => {
@@ -87,14 +90,24 @@ export const CharacterList : React.FC<CharacterListProps> = ({token}) => {
         isFanDisplay(false);
       }
 
+      //ファン計算画面表示
+      const FanCalculation = () => {
+        isFanCalculationDisplay(true);
+      }
   
       if (loading) {
           return <div className="min-h-full flex justify-center bg-Looding bg-cover"></div>
       }
 
+      if (fanCalculationDisplay) {
+        return (
+          <div></div>
+        );
+      }
+
       if (fanDisplay) {
         return (
-          <CharacterListFans selectUmamusume={selectUmamusume} countUp={countUp} returnAddFan={addFan} returnOnReturn={onReturn}></CharacterListFans>
+          <CharacterListFans selectUmamusume={selectUmamusume} countUp={countUp} returnAddFan={addFan} returnOnReturn={onReturn} returnFanCalculation={FanCalculation}></CharacterListFans>
         );
       }
       

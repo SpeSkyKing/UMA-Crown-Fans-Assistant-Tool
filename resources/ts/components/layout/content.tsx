@@ -5,6 +5,7 @@ import { RaceList } from '../container/raceList/raceList';
 import { RemainingRaceList } from '../container/remainingRaceList/remainingRaceList';
 import { LiveList } from '../container/liveList/liveList';
 import { ActerList } from '../container/acterList/acterList';
+import { JewelController } from '../container/jewelController/jewelController';
 import { ContentProps } from '../interface/props';
 
 //コンテンツ情報
@@ -33,6 +34,10 @@ export const Content :React.FC<ContentProps> = ({ selectedContent, token}) => {
         case 'acterList':
             return (
                 <ActerList></ActerList>
+            );
+        case 'jewelController':
+            return (
+                <JewelController token={token}></JewelController>
             );
     }
   };
