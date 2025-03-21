@@ -6,7 +6,6 @@ import { User } from './interface/interface';
 
 //エントリーポイント
 export const Home = () => {
-
     //ログイン後か判断する
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
     

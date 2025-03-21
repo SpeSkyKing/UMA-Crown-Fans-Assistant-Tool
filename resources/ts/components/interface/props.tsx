@@ -247,8 +247,10 @@ export interface JewelControllerProps {
 }
 
 //JewelControllerData.tsxで利用する
-export interface JewelControllerDataProps {
-    jewel: Jewel;
+export interface JewelControllerCalendarProps {
+    token: string | null;
+    year: number;
+    month: number;
 }
 
 /*
