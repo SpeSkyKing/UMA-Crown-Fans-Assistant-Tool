@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserPersonalController;
 use App\Http\Controllers\Api\ActerController;
 use App\Http\Controllers\Api\UmamusumeController;
 use App\Http\Controllers\Api\LiveController;
+use App\Http\Controllers\Api\JewelController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -46,5 +47,10 @@ Route::prefix('live')->group(function () {
     Route::apiResource('list', LiveController::class);
     Route::get('list', [LiveController::class, 'liveList']);
     Route::middleware('auth:sanctum')->post('umamusumeList', [LiveController::class, 'umamusumeList']);
+});
+
+Route::prefix('jewelController')->group(function () {
+    Route::middleware('auth:sanctum')->post('regist', [JewelController::class, 'jewelRegist']);
+    Route::middleware('auth:sanctum')->post('list', [JewelController::class, 'jewelList']);
 });
 
